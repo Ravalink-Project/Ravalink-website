@@ -1,0 +1,426 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>Ravalink</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Geist:wght@400;500;600&family=Geist+Mono:wght@400;500&display=swap" rel="stylesheet">
+<style>
+:root{--bg:#08080c;--p1:#0e0e15;--p2:#14141d;--bd:rgba(255,255,255,.09);--tx:#f4f3fb;--mu:#8d8ca3;--a:#c34bff;--btn:#2a1163;--btnh:#37157f;--gr:linear-gradient(135deg,#4d3dff,#c800f0);--ui:"Geist",system-ui,-apple-system,"Segoe UI",Roboto,"Noto Sans",sans-serif;--mo:"Geist Mono",ui-monospace,Menlo,Consolas,monospace;
+box-sizing:border-box;padding-top:env(safe-area-inset-top,0px);padding-bottom:env(safe-area-inset-bottom,0px);color-scheme:dark}
+*{box-sizing:border-box;margin:0}
+html{scroll-padding-top:calc(env(safe-area-inset-top,0px) + 90px);scroll-behavior:smooth}
+body{background:var(--bg);color:var(--tx);font:400 1rem/1.6 var(--ui);overflow-x:hidden;-webkit-font-smoothing:antialiased}
+button{font-family:inherit}
+:focus-visible{outline:2px solid var(--a);outline-offset:3px}
+.wrap{width:min(1120px,100%);margin:0 auto;padding:0 20px;position:relative}
+.btn{display:inline-flex;align-items:center;justify-content:center;padding:13px 22px;border-radius:10px;background:var(--gr);color:#fff;font:500 .95rem var(--ui);text-decoration:none;border:0;cursor:pointer;transition:filter .2s,transform .2s}
+.btn:hover{filter:brightness(1.18);transform:translateY(-1px)}
+.btn.ghost{background:var(--p2);border:1px solid var(--bd);color:var(--tx)}
+.btn.sm{padding:9px 14px;font-size:.88rem}
+/* header */
+header{position:fixed;top:calc(env(safe-area-inset-top,0px) + 12px);left:0;right:0;display:flex;justify-content:center;z-index:58;pointer-events:none}
+body.mo{overflow:hidden}
+.bar{pointer-events:auto;width:min(1040px,calc(100% - 24px));display:flex;align-items:center;justify-content:space-between;gap:10px;padding:8px 8px 8px 14px;border:1px solid var(--bd);border-radius:14px;background:rgba(14,14,21,.62);backdrop-filter:blur(16px) saturate(1.4);-webkit-backdrop-filter:blur(16px) saturate(1.4);transition:background .3s}
+.s .bar{background:rgba(14,14,21,.9)}
+.logo{display:flex;align-items:center;gap:9px;font:600 1.12rem var(--ui);letter-spacing:-.02em;color:var(--tx);text-decoration:none}
+.logo svg{width:30px;height:30px;border-radius:7px}.logo b{font-weight:600;color:var(--a)}
+.links{display:flex;gap:2px;align-items:center}
+.links a,.lnk{color:var(--mu);text-decoration:none;font:400 .93rem var(--ui);background:none;border:0;cursor:pointer;padding:9px 14px;border-radius:8px;transition:color .2s,background .2s}
+.links a:hover,.lnk:hover{color:var(--tx);background:var(--p2)}
+.act{display:flex;gap:8px;align-items:center}
+.lbtn{display:flex;align-items:center;gap:7px;background:var(--p2);color:var(--tx);border:1px solid var(--bd);border-radius:9px;padding:8px 11px;font:500 .8rem var(--mo);cursor:pointer;transition:border-color .2s}
+.lbtn:hover,.lbtn[aria-expanded=true]{border-color:var(--a)}
+.burger{display:none;width:38px;height:38px;border-radius:9px;border:1px solid var(--bd);background:var(--p2);cursor:pointer;position:relative}
+.burger i{position:absolute;left:10px;right:10px;height:2px;background:var(--tx);border-radius:2px;transition:transform .35s cubic-bezier(.3,.9,.3,1),top .35s}
+.burger i:nth-child(1){top:14px}.burger i:nth-child(2){top:21px}
+.mo .burger i:nth-child(1){top:18px;transform:rotate(45deg)}.mo .burger i:nth-child(2){top:18px;transform:rotate(-45deg)}
+.lp{position:fixed;top:calc(env(safe-area-inset-top,0px) + 76px);right:max(12px,calc(50vw - 520px));width:min(460px,calc(100vw - 24px));max-height:min(70vh,520px);overflow:auto;display:grid;grid-template-columns:repeat(auto-fill,minmax(130px,1fr));gap:2px;padding:8px;background:var(--p1);border:1px solid var(--bd);border-radius:14px;box-shadow:0 30px 80px -20px rgba(0,0,0,.8);z-index:60;opacity:0;visibility:hidden;transform:translateY(-8px);transition:opacity .2s,transform .3s cubic-bezier(.3,.9,.3,1),visibility .2s}
+.lp.open{opacity:1;visibility:visible;transform:none}
+.lp button{background:none;border:0;color:var(--tx);font-size:.95rem;text-align:start;padding:10px 12px;border-radius:8px;cursor:pointer}
+.lp button:hover{background:var(--p2)}.lp button.on{background:var(--btn);color:#fff}
+.bgd{position:fixed;inset:0;z-index:55;background:rgba(0,0,0,.55);opacity:0;visibility:hidden;transition:opacity .25s,visibility .25s}.bgd.open{opacity:1;visibility:visible}
+/* hero */
+.hero{position:relative;padding:160px 0 120px;overflow:hidden}
+#cv{position:absolute;inset:0;width:100%;height:100%;display:block}
+.pill{display:inline-flex;align-items:center;gap:9px;border:1px solid var(--bd);background:var(--p1);border-radius:999px;padding:6px 14px;font:500 .8rem var(--mo);color:var(--mu);margin-bottom:26px}
+.pill i{width:7px;height:7px;border-radius:50%;background:var(--a);animation:pu 2s ease-in-out infinite}
+@keyframes pu{50%{opacity:.35;transform:scale(.7)}}
+h1,h2{font-weight:500;letter-spacing:-.03em}
+h1{font-size:clamp(2.4rem,7vw,4.8rem);line-height:1.05;max-width:12em}
+.l{display:block;overflow:hidden;padding-bottom:.12em;margin-bottom:-.12em}
+.l i{display:block;font-style:normal}.g{color:var(--mu)}
+h1 .l i{transform:translateY(105%);animation:up .9s cubic-bezier(.2,.8,.2,1) forwards;animation-delay:calc(var(--n)*.12s + .15s)}
+@keyframes up{to{transform:none}}
+.sub{color:var(--mu);font-size:clamp(1.02rem,1.6vw,1.2rem);line-height:1.65;max-width:34em;margin:24px 0 30px}
+.cta{display:flex;flex-wrap:wrap;gap:12px}
+.win{background:var(--p1);border:1px solid var(--bd);border-radius:12px;overflow:hidden}
+.wh{display:flex;justify-content:space-between;align-items:center;gap:12px;padding:12px 16px;border-bottom:1px solid var(--bd);font:500 .78rem var(--mo);color:var(--mu)}
+.wh em{font-style:normal;color:#4fdc9c;display:flex;gap:6px;align-items:center}.wh em b{width:6px;height:6px;border-radius:50%;background:#4fdc9c}
+.wb{padding:20px}
+.hw{margin-top:56px;max-width:560px}
+.nodes{display:flex;align-items:center;gap:12px;margin-bottom:18px}
+.nd{padding:10px 16px;border:1px solid var(--bd);border-radius:8px;background:var(--p2);font:500 .85rem var(--mo);transition:border-color .4s,color .4s,box-shadow .4s}
+.lk{flex:1;height:1px;position:relative;background:repeating-linear-gradient(90deg,var(--mu) 0 4px,transparent 4px 9px)}
+.lk i{position:absolute;top:-2.5px;left:0;width:6px;height:6px;border-radius:1px;background:var(--a);animation:pk 2.2s linear infinite;animation-delay:calc(var(--i)*.7s)}
+@keyframes pk{to{left:calc(100% - 6px)}}
+body[data-m='0'] .lk i{background:#6d6f93;animation-duration:3.6s}
+body[data-m='0'] #sv{color:var(--mu)}
+body[data-m='1'] #sv{border-color:var(--a);color:#fff;box-shadow:0 0 28px -6px var(--a)}
+.host{display:block;font:400 .85rem var(--mo);color:var(--mu);margin-bottom:18px}
+.seg{display:inline-flex;background:var(--p2);border:1px solid var(--bd);border-radius:10px;padding:3px;position:relative}
+.seg button{position:relative;z-index:1;background:none;border:0;color:var(--mu);font:500 .85rem var(--ui);padding:9px 16px;border-radius:7px;cursor:pointer;transition:color .3s}
+.seg button[aria-pressed=true]{color:#fff}
+.seg .th{position:absolute;top:3px;bottom:3px;left:3px;border-radius:7px;background:var(--gr);transition:transform .4s cubic-bezier(.3,.9,.3,1),width .4s cubic-bezier(.3,.9,.3,1)}
+.pz{position:absolute;right:20px;bottom:20px;width:40px;height:40px;border-radius:10px;border:1px solid var(--bd);background:var(--p1);color:var(--tx);cursor:pointer;display:grid;place-items:center;z-index:3}
+body.pa *{animation-play-state:paused!important}
+/* sections */
+.mq{overflow:hidden;border-block:1px dashed var(--bd);padding:18px 0;direction:ltr}
+.mt{display:flex;width:max-content;animation:mq 80s linear infinite}
+.mq:hover .mt{animation-play-state:paused}
+.mt span{margin:0 6px;padding:8px 16px;border:1px solid var(--bd);border-radius:999px;background:var(--p1);color:var(--mu);white-space:nowrap;font-size:.95rem}
+@keyframes mq{to{transform:translateX(-50%)}}
+.sec{padding:80px 0;border-top:1px dashed var(--bd)}
+.mq+.sec{border-top:0}
+.row{display:grid;grid-template-columns:1fr;gap:36px;align-items:center}
+@media(min-width:900px){.row{grid-template-columns:1fr 1fr;gap:72px}.row.rev .tx{order:2}}
+h2{font-size:clamp(1.8rem,4vw,2.7rem);line-height:1.12}
+.tx p{color:var(--mu);margin-top:16px;max-width:30em;font-size:1.05rem}
+.rv{opacity:0;transform:translateY(24px);transition:opacity .8s,transform .8s cubic-bezier(.2,.8,.2,1)}.rv.in{opacity:1;transform:none}
+.rw{display:flex;justify-content:space-between;align-items:center;gap:10px;padding:15px 16px;border-bottom:1px solid var(--bd);font:500 .85rem var(--mo);animation:hl 4.8s ease-in-out infinite;animation-delay:calc(var(--i)*1.6s)}
+.rw:last-child{border-bottom:0}
+@keyframes hl{0%,35%,100%{background:transparent}10%,25%{background:rgba(195,75,255,.12)}}
+.rw span{display:flex;align-items:center;gap:8px;color:var(--mu)}
+.pl{padding:3px 9px;border:1px solid var(--bd);border-radius:6px;color:var(--tx)}
+.tm{padding:18px 20px;font:400 .88rem/1.9 var(--mo);overflow-x:auto;direction:ltr;text-align:left}
+.tm span{display:block;white-space:pre;opacity:0}
+.tm .c{color:var(--a)}.tm .o{color:var(--mu)}.tm .k{color:#4fdc9c}
+.in .tm span{animation:ty .01s forwards;animation-delay:calc(var(--i)*.8s + .3s)}
+@keyframes ty{to{opacity:1}}
+.tm span:last-child::after{content:"▍";color:var(--a);animation:bl 1s steps(2) infinite}
+@keyframes bl{50%{opacity:0}}
+.eqc{display:block;width:100%;height:220px}
+pre{direction:ltr;text-align:left;padding:20px;font:400 .92rem/1.9 var(--mo);overflow-x:auto}
+pre span{display:block;white-space:pre;opacity:0;transform:translateX(-12px);transition:opacity .6s,transform .6s}
+.in pre span{opacity:1;transform:none}
+.in pre span:nth-child(2){transition-delay:.35s}.in pre span:nth-child(3){transition-delay:.7s}
+.rm{color:#ff6b8b}.ad{color:#4fdc9c}.cm{color:var(--mu)}
+.fin{position:relative;text-align:center;padding:110px 0 220px;border-top:1px dashed var(--bd);overflow:hidden}
+#ca{position:absolute;left:0;right:0;bottom:0;width:100%;height:360px;pointer-events:none}
+.fin .wrap{display:flex;flex-direction:column;align-items:center;gap:22px}
+.fin svg{width:64px;height:64px;border-radius:14px}
+.fin h2 .l i{transform:none}
+.fin p{color:var(--mu);font-size:1.1rem}
+footer{border-top:1px dashed var(--bd);padding-top:48px;color:var(--mu);font-size:.93rem}
+.fg{display:flex;flex-wrap:wrap;gap:28px;justify-content:space-between;align-items:flex-start}
+footer .e1c{margin-top:12px}
+.fl{display:flex;gap:26px;flex-wrap:wrap}
+.fl a,.fl button{color:var(--mu);text-decoration:none;background:none;border:0;font:inherit;cursor:pointer;padding:4px 0;transition:color .2s}
+.fl a:hover,.fl button:hover{color:var(--tx)}
+.fb{margin-top:34px;padding-top:18px;border-top:1px solid var(--bd);font-size:.85rem}
+#fc{display:block;width:100%;height:clamp(90px,17vw,220px);margin-top:20px}
+dialog{margin:auto;width:min(680px,calc(100vw - 24px));max-height:86vh;background:var(--p1);color:var(--tx);border:1px solid var(--bd);border-radius:16px;padding:0;overflow:hidden}
+dialog::backdrop{background:rgba(0,0,0,.65);backdrop-filter:blur(4px)}
+dialog[open]{display:flex;flex-direction:column;animation:dp .35s cubic-bezier(.2,.8,.2,1)}
+@keyframes dp{from{opacity:0;transform:translateY(16px) scale(.98)}}
+.dh{display:flex;justify-content:space-between;align-items:center;padding:16px 22px;border-bottom:1px solid var(--bd);font:500 1.05rem var(--ui)}
+.dh button{width:36px;height:36px;border-radius:9px;border:1px solid var(--bd);background:var(--p2);color:var(--tx);cursor:pointer}
+.dbd{padding:8px 24px 28px;overflow:auto;line-height:1.65;font-size:.95rem}
+.dbd h3{font:500 1rem var(--ui);margin:24px 0 6px}.dbd p{color:var(--mu)}.dbd a{color:var(--a)}
+
+.btn{background:var(--btn);border:1px solid rgba(170,120,255,.32)}
+.btn:hover{background:var(--btnh);filter:none;transform:translateY(-1px)}
+.btn.ghost{background:var(--p2);border:1px solid var(--bd)}
+.btn.ghost:hover{background:var(--p1)}
+.mm{position:fixed;top:calc(env(safe-area-inset-top,0px) + 76px);left:12px;right:12px;z-index:56;display:none;background:var(--p1);border:1px solid var(--bd);border-radius:18px;padding:8px;box-shadow:0 30px 80px -20px rgba(0,0,0,.9);opacity:0;visibility:hidden;transform:translateY(-10px) scale(.97);transform-origin:top right;transition:opacity .25s,transform .4s cubic-bezier(.2,.8,.2,1),visibility .25s}
+.mo .mm{opacity:1;visibility:visible;transform:none}
+.mr{display:flex;align-items:center;justify-content:space-between;gap:12px;width:100%;padding:17px 16px;border-radius:12px;background:none;border:0;color:var(--tx);font:500 1.1rem var(--ui);letter-spacing:-.01em;text-align:start;text-decoration:none;cursor:pointer;opacity:0;transform:translateY(8px);transition:opacity .4s,transform .45s cubic-bezier(.2,.8,.2,1),background .2s}
+.mr:active{background:var(--p2)}
+.mr svg{color:var(--mu);flex:none}
+.mr small{display:flex;align-items:center;gap:8px;font:500 .78rem var(--mo);color:var(--mu)}.mr small b{font-weight:500}
+.mo .mr{opacity:1;transform:none}
+.mr+.mr:not(.gh2){border-top:1px solid var(--bd);border-radius:0}
+.mr.gh2{justify-content:center;margin-top:8px;background:var(--btn);border:1px solid rgba(170,120,255,.32);font-size:1rem}
+.mm>:nth-child(2){transition-delay:.05s}.mm>:nth-child(3){transition-delay:.1s}.mm>:nth-child(4){transition-delay:.15s}.mm>:nth-child(5){transition-delay:.2s}
+@media(max-width:820px){.links,.lbtn{display:none}.burger{display:block}.mm{display:block}.lp{top:auto;bottom:0;left:0;right:0;width:auto;max-height:70vh;border-radius:16px 16px 0 0;padding-bottom:calc(env(safe-area-inset-bottom,0px) + 14px);transform:translateY(100%);grid-template-columns:repeat(2,1fr)}.lp.open{transform:none}}
+.row h2{max-width:11em}
+.lead{color:var(--mu);font-size:clamp(1.05rem,1.8vw,1.3rem);line-height:1.7;max-width:34em}
+@media(min-width:900px){.row{align-items:start}}
+.steps{list-style:none;padding:0;margin-top:40px;border-top:1px solid var(--bd)}
+.steps li{display:grid;grid-template-columns:56px 1fr;gap:12px;padding:26px 0;border-bottom:1px solid var(--bd);align-items:baseline}
+.steps b{font:500 .85rem var(--mo);color:var(--a)}
+.steps p{font-size:clamp(1.1rem,2.2vw,1.5rem);letter-spacing:-.015em;line-height:1.4}
+.feat{display:grid;grid-template-columns:repeat(auto-fit,minmax(260px,1fr));gap:20px}
+.card{background:var(--p1);border:1px solid var(--bd);border-radius:14px;padding:28px;transition:border-color .3s,transform .3s cubic-bezier(.2,.8,.2,1)}
+.card:hover{border-color:rgba(195,75,255,.45);transform:translateY(-3px)}
+.card h3{font:500 1.3rem var(--ui);letter-spacing:-.02em;margin-bottom:12px}
+.card p{color:var(--mu)}
+.cl{display:flex;flex-wrap:wrap;gap:20px 18px;margin-top:40px;min-height:100px}
+.av{display:flex;flex-direction:column;align-items:center;gap:8px;width:84px;color:var(--mu);text-decoration:none;font:400 .76rem var(--mo);transition:transform .25s cubic-bezier(.2,.8,.2,1),color .2s}
+.av img,.av .ph{width:64px;height:64px;border-radius:14px;border:1px solid var(--bd);background:var(--p2);object-fit:cover;display:grid;place-items:center;font:600 1.4rem var(--ui);color:#fff}
+.av:hover{transform:translateY(-4px);color:var(--tx)}
+.av:hover img,.av:hover .ph{border-color:var(--a)}
+.av span{max-width:84px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+.av.sk{pointer-events:none}.av.sk div{width:64px;height:64px;border-radius:14px;background:var(--p2);animation:sk 1.4s ease-in-out infinite}
+@keyframes sk{50%{opacity:.4}}
+@media (prefers-reduced-motion:reduce){*{animation:none!important;transition:none!important}.rv,.l i,.tm span,pre span{opacity:1!important;transform:none!important}html{scroll-behavior:auto}}
+</style>
+</head>
+<body>
+<header id='top'><div class='bar'><a class='logo' href='#top'><svg aria-hidden='true'><use href='#r'/></svg>Rava<b>link</b></a><nav class='links'><a href='#how' class='k1'></a><a href='#cs' class='ctl'></a><button type='button' class='lnk lgl' data-open='1'></button></nav><div class='act'><a class='btn sm' href='https://github.com/Ravalink-Project/Ravalink' target='_blank' rel='noopener'>GitHub</a><button id='lb' class='lbtn' type='button' aria-expanded='false' aria-haspopup='true' aria-label='Language'><svg viewBox='0 0 24 24' width='16' height='16' fill='none' stroke='currentColor' stroke-width='1.8' aria-hidden='true'><circle cx='12' cy='12' r='9'/><path d='M3 12h18M12 3c3 3.2 3 14.8 0 18M12 3c-3 3.2-3 14.8 0 18'/></svg><span class='ln'></span></button><button id='bt' class='burger' type='button' aria-expanded='false' aria-label='Menu'><i></i><i></i></button></div></div></header>
+<div id='lp' class='lp'></div><div id='bg' class='bgd'></div>
+<div id='mm' class='mm'>
+<a class='mr' href='#how'><span class='k1'></span><svg width='16' height='16' viewBox='0 0 16 16' fill='none' stroke='currentColor' stroke-width='1.6' aria-hidden='true'><path d='M6 3l5 5-5 5'/></svg></a>
+<a class='mr' href='#cs'><span class='ctl'></span><svg width='16' height='16' viewBox='0 0 16 16' fill='none' stroke='currentColor' stroke-width='1.6' aria-hidden='true'><path d='M6 3l5 5-5 5'/></svg></a>
+<button class='mr' type='button' data-open='1'><span class='lgl'></span><svg width='16' height='16' viewBox='0 0 16 16' fill='none' stroke='currentColor' stroke-width='1.6' aria-hidden='true'><path d='M6 3l5 5-5 5'/></svg></button>
+<button class='mr' id='ml' type='button'><span class='lgn'></span><small><svg viewBox='0 0 24 24' width='16' height='16' fill='none' stroke='currentColor' stroke-width='1.8' aria-hidden='true'><circle cx='12' cy='12' r='9'/><path d='M3 12h18M12 3c3 3.2 3 14.8 0 18M12 3c-3 3.2-3 14.8 0 18'/></svg><b class='ln'></b></small></button>
+<a class='mr gh2' href='https://github.com/Ravalink-Project/Ravalink' target='_blank' rel='noopener'>GitHub</a></div>
+<section class='hero'><canvas id='cv' aria-hidden='true'></canvas><div class='wrap'>
+<div class='pill'><i></i><span id='s'></span></div><h1 id='h'></h1><p class='sub' id='p'></p>
+<div class='cta'><a class='btn' href='https://github.com/Ravalink-Project/Ravalink' target='_blank' rel='noopener'>GitHub</a><a class='btn ghost k1' href='#how'></a></div></div>
+<button id='pz' class='pz' type='button' aria-pressed='false' aria-label='Pause animations'></button></section>
+<section class='sec'><div class='wrap row'><h2 id='w1'></h2><p class='lead' id='w2'></p></div></section>
+<section class='sec' id='how'><div class='wrap'><h2 id='t1'></h2><ol class='steps'><li><b>01</b><p id='s1'></p></li><li><b>02</b><p id='s2'></p></li><li><b>03</b><p id='s3'></p></li></ol></div></section>
+<section class='sec'><div class='wrap feat'>
+<div class='card rv'><h3 id='b'></h3><p id='c1d'></p></div>
+<div class='card rv'><h3 id='v1t'></h3><p id='v1d'></p></div>
+<div class='card rv'><h3 id='c3t'></h3><p id='c3d'></p></div></div></section>
+<section class='sec' id='cs'><div class='wrap'><h2 id='ct'></h2><p class='lead' id='cd' style='margin-top:16px'></p><div class='cl' id='cl'></div></div></section>
+<section class='fin'><canvas id='ca' aria-hidden='true'></canvas><div class='wrap'><svg aria-hidden='true'><use href='#r'/></svg><h2 id='fw'></h2><a class='btn' href='https://github.com/Ravalink-Project/Ravalink' target='_blank' rel='noopener'>GitHub</a></div></section>
+<footer><div class='wrap'><div class='fg'><div><a class='logo' href='#top'><svg aria-hidden='true'><use href='#r'/></svg>Rava<b>link</b></a></div><div class='fl'><a href='#how' class='k1'></a><a href='#cs' class='ctl'></a><a href='https://github.com/Ravalink-Project/Ravalink' target='_blank' rel='noopener'>GitHub</a><button type='button' class='lgl' data-open='1'></button></div></div><div class='fb'>© 2026 Ravalink</div><canvas id='fc' aria-hidden='true'></canvas></div></footer>
+<dialog id='lm' aria-labelledby='lt'><div class='dh'><span id='lt' class='lgl'></span><button type='button' id='lx' aria-label='Close'>✕</button></div><div class='dbd' id='lbd'></div></dialog>
+<script>
+const L={
+en:["English","Lavalink, rebuilt in Rust.","A drop-in replacement: point your bot at Ravalink, change nothing else.","In development","Same protocol","Written in Rust","Smooth playback"],
+fr:["Français","Lavalink, réécrit en Rust.","Un remplaçant direct : pointez votre bot vers Ravalink, sans rien modifier d’autre.","En développement","Même protocole","Écrit en Rust","Lecture fluide"],
+es:["Español","Lavalink, reconstruido en Rust.","Un reemplazo directo: apunta tu bot a Ravalink sin cambiar nada más.","En desarrollo","Mismo protocolo","Escrito en Rust","Reproducción fluida"],
+pt:["Português","Lavalink, reconstruído em Rust.","Um substituto direto: aponte seu bot para o Ravalink e não mude mais nada.","Em desenvolvimento","Mesmo protocolo","Escrito em Rust","Reprodução fluida"],
+de:["Deutsch","Lavalink, neu gebaut in Rust.","Ein direkter Ersatz: Bot auf Ravalink umstellen, sonst nichts ändern.","In Entwicklung","Gleiches Protokoll","In Rust geschrieben","Flüssige Wiedergabe"],
+it:["Italiano","Lavalink, ricostruito in Rust.","Un sostituto diretto: punta il bot su Ravalink, senza cambiare altro.","In sviluppo","Stesso protocollo","Scritto in Rust","Riproduzione fluida"],
+nl:["Nederlands","Lavalink, opnieuw gebouwd in Rust.","Een directe vervanger: wijs je bot naar Ravalink, verder verandert er niets.","In ontwikkeling","Zelfde protocol","Geschreven in Rust","Vloeiende weergave"],
+sv:["Svenska","Lavalink, ombyggt i Rust.","Ett direkt byte: peka din bot mot Ravalink, ändra inget annat.","Under utveckling","Samma protokoll","Skrivet i Rust","Mjuk uppspelning"],
+fi:["Suomi","Lavalink, rakennettu uudelleen Rustilla.","Suora korvaaja: osoita bottisi Ravalinkiin, älä muuta mitään muuta.","Kehitteillä","Sama protokolla","Kirjoitettu Rustilla","Sulava toisto"],
+pl:["Polski","Lavalink, przebudowany w Rust.","Bezpośredni zamiennik: wskaż bota na Ravalink i nic więcej nie zmieniaj.","W rozwoju","Ten sam protokół","Napisany w Rust","Płynne odtwarzanie"],
+cs:["Čeština","Lavalink, přestavěný v Rustu.","Přímá náhrada: nasměrujte bota na Ravalink a nic dalšího neměňte.","Ve vývoji","Stejný protokol","Napsáno v Rustu","Plynulé přehrávání"],
+ro:["Română","Lavalink, reconstruit în Rust.","Înlocuitor direct: îndreaptă botul spre Ravalink, fără alte modificări.","În dezvoltare","Același protocol","Scris în Rust","Redare fluidă"],
+hu:["Magyar","Lavalink, újraépítve Rustban.","Közvetlen csere: irányítsd a botot a Ravalinkre, mást nem kell módosítani.","Fejlesztés alatt","Ugyanaz a protokoll","Rustban írva","Folyékony lejátszás"],
+el:["Ελληνικά","Το Lavalink, ξαναχτισμένο σε Rust.","Άμεση αντικατάσταση: στρέψτε το bot σας στο Ravalink, χωρίς άλλη αλλαγή.","Υπό ανάπτυξη","Ίδιο πρωτόκολλο","Γραμμένο σε Rust","Ομαλή αναπαραγωγή"],
+ru:["Русский","Lavalink, переписанный на Rust.","Прямая замена: направьте бота на Ravalink, больше ничего менять не нужно.","В разработке","Тот же протокол","Написан на Rust","Плавное воспроизведение"],
+uk:["Українська","Lavalink, переписаний на Rust.","Пряма заміна: спрямуйте бота на Ravalink, більше нічого змінювати не треба.","У розробці","Той самий протокол","Написано на Rust","Плавне відтворення"],
+tr:["Türkçe","Lavalink, Rust ile yeniden yazıldı.","Doğrudan yedek: botunu Ravalink’e yönlendir, başka hiçbir şeyi değiştirme.","Geliştiriliyor","Aynı protokol","Rust ile yazıldı","Akıcı oynatma"],
+ar:["العربية","Lavalink، أُعيد بناؤه بلغة Rust.","بديل مباشر: وجّه بوتك إلى Ravalink دون تغيير أي شيء آخر.","قيد التطوير","البروتوكول نفسه","مكتوب بلغة Rust","تشغيل سلس"],
+he:["עברית","Lavalink, נבנה מחדש ב-Rust.","תחליף ישיר: מכוונים את הבוט אל Ravalink ולא משנים דבר נוסף.","בפיתוח","אותו פרוטוקול","נכתב ב-Rust","ניגון חלק"],
+fa:["فارسی","Lavalink، بازنویسی‌شده با Rust.","جایگزین مستقیم: ربات خود را به Ravalink وصل کنید و چیز دیگری را تغییر ندهید.","در حال توسعه","همان پروتکل","نوشته‌شده با Rust","پخش روان"],
+hi:["हिन्दी","Lavalink, Rust में दोबारा बना।","सीधा विकल्प: अपने बॉट को Ravalink की ओर करें, बाकी कुछ न बदलें।","विकासाधीन","वही प्रोटोकॉल","Rust में लिखा","सहज प्लेबैक"],
+zh:["中文","用 Rust 重建的 Lavalink。","可直接替换：把机器人指向 Ravalink，其他无需改动。","开发中","相同协议","Rust 编写","流畅播放"],
+ja:["日本語","Rustで作り直したLavalink。","そのまま置き換え可能。ボットの接続先をRavalinkにするだけ。","開発中","同じプロトコル","Rust製","なめらかな再生"],
+ko:["한국어","Rust로 다시 만든 Lavalink.","그대로 교체 가능: 봇이 Ravalink를 가리키게만 하면 됩니다.","개발 중","동일한 프로토콜","Rust로 작성","부드러운 재생"],
+vi:["Tiếng Việt","Lavalink, viết lại bằng Rust.","Thay thế trực tiếp: trỏ bot tới Ravalink, không cần đổi gì khác.","Đang phát triển","Cùng giao thức","Viết bằng Rust","Phát mượt mà"],
+th:["ไทย","Lavalink ที่สร้างใหม่ด้วย Rust","แทนที่ได้ทันที: ชี้บอตมาที่ Ravalink โดยไม่ต้องแก้อย่างอื่น","กำลังพัฒนา","โปรโตคอลเดียวกัน","เขียนด้วย Rust","เล่นเสียงลื่นไหล"],
+id:["Bahasa Indonesia","Lavalink, dibangun ulang dengan Rust.","Pengganti langsung: arahkan bot ke Ravalink, tanpa mengubah hal lain.","Dalam pengembangan","Protokol sama","Ditulis dengan Rust","Pemutaran mulus"]
+};
+const L2={
+en:["How it works","Same REST API and WebSocket. Your bot code stays untouched.","Fast and light, with predictable memory and no garbage collector.","Steady audio and low latency, even with many players.","One line to switch","Change the server address in your bot’s config. That’s the whole migration.","Same bot. New engine."],
+fr:["Comment ça marche","Même API REST, même WebSocket. Le code de votre bot ne change pas.","Rapide et léger, avec une mémoire prévisible et sans ramasse-miettes.","Audio stable et faible latence, même avec de nombreux lecteurs.","Une ligne à changer","Modifiez l’adresse du serveur dans la config de votre bot. La migration s’arrête là.","Même bot. Nouveau moteur."],
+es:["Cómo funciona","Misma API REST y WebSocket. El código de tu bot no cambia.","Rápido y ligero, con memoria predecible y sin recolector de basura.","Audio estable y baja latencia, incluso con muchos reproductores.","Una línea para cambiar","Cambia la dirección del servidor en la configuración de tu bot. Esa es toda la migración.","Mismo bot. Nuevo motor."],
+pt:["Como funciona","Mesma API REST e WebSocket. O código do seu bot não muda.","Rápido e leve, com memória previsível e sem coletor de lixo.","Áudio estável e baixa latência, mesmo com muitos players.","Uma linha para trocar","Altere o endereço do servidor na configuração do bot. Essa é toda a migração.","Mesmo bot. Novo motor."],
+de:["So funktioniert’s","Gleiche REST-API und WebSocket. Der Code deines Bots bleibt unverändert.","Schnell und schlank, mit planbarem Speicher und ohne Garbage Collector.","Stabiler Ton und geringe Latenz, auch bei vielen Playern.","Eine Zeile zum Umstellen","Ändere die Serveradresse in der Bot-Konfiguration. Mehr ist die Migration nicht.","Gleicher Bot. Neuer Motor."],
+it:["Come funziona","Stessa API REST e WebSocket. Il codice del tuo bot resta invariato.","Veloce e leggero, con memoria prevedibile e senza garbage collector.","Audio stabile e bassa latenza, anche con molti player.","Una riga da cambiare","Cambia l’indirizzo del server nella configurazione del bot. La migrazione finisce qui.","Stesso bot. Nuovo motore."],
+nl:["Hoe het werkt","Dezelfde REST-API en WebSocket. De code van je bot blijft ongewijzigd.","Snel en licht, met voorspelbaar geheugen en zonder garbage collector.","Stabiel geluid en lage latency, ook met veel spelers.","Eén regel om te wisselen","Wijzig het serveradres in de config van je bot. Meer is de migratie niet.","Dezelfde bot. Nieuwe motor."],
+sv:["Så fungerar det","Samma REST-API och WebSocket. Din botkod förblir orörd.","Snabb och lätt, med förutsägbart minne och utan skräpsamlare.","Stabilt ljud och låg latens, även med många spelare.","En rad att byta","Ändra serveradressen i botens konfiguration. Det är hela migreringen.","Samma bot. Ny motor."],
+fi:["Näin se toimii","Sama REST-rajapinta ja WebSocket. Botin koodi pysyy ennallaan.","Nopea ja kevyt, ennustettava muistinkäyttö eikä roskienkeruuta.","Vakaa ääni ja pieni viive, vaikka soittimia olisi paljon.","Yksi rivi vaihtoon","Vaihda palvelimen osoite botin asetuksissa. Siinä koko siirtymä.","Sama botti. Uusi moottori."],
+pl:["Jak to działa","To samo REST API i WebSocket. Kod twojego bota pozostaje bez zmian.","Szybki i lekki, z przewidywalną pamięcią i bez garbage collectora.","Stabilny dźwięk i niskie opóźnienie, nawet przy wielu odtwarzaczach.","Jedna linia do zmiany","Zmień adres serwera w konfiguracji bota. To cała migracja.","Ten sam bot. Nowy silnik."],
+cs:["Jak to funguje","Stejné REST API a WebSocket. Kód vašeho bota zůstává beze změny.","Rychlý a lehký, s předvídatelnou pamětí a bez garbage collectoru.","Stabilní zvuk a nízká latence i s mnoha přehrávači.","Jeden řádek ke změně","Změňte adresu serveru v konfiguraci bota. To je celá migrace.","Stejný bot. Nový motor."],
+ro:["Cum funcționează","Același API REST și WebSocket. Codul botului tău rămâne neschimbat.","Rapid și ușor, cu memorie previzibilă și fără garbage collector.","Sunet stabil și latență mică, chiar cu mulți playeri.","O singură linie de schimbat","Schimbă adresa serverului în configurarea botului. Asta e toată migrarea.","Același bot. Motor nou."],
+hu:["Hogyan működik","Ugyanaz a REST API és WebSocket. A bot kódja változatlan marad.","Gyors és könnyű, kiszámítható memóriahasználattal, szemétgyűjtő nélkül.","Stabil hang és alacsony késleltetés sok lejátszónál is.","Egyetlen sor a váltáshoz","Írd át a szervercímet a bot konfigurációjában. Ennyi az egész átállás.","Ugyanaz a bot. Új motor."],
+el:["Πώς λειτουργεί","Ίδιο REST API και WebSocket. Ο κώδικας του bot σας μένει ως έχει.","Γρήγορο και ελαφρύ, με προβλέψιμη μνήμη και χωρίς garbage collector.","Σταθερός ήχος και χαμηλή καθυστέρηση, ακόμη και με πολλούς players.","Μία γραμμή για την αλλαγή","Αλλάξτε τη διεύθυνση του διακομιστή στις ρυθμίσεις του bot. Αυτή είναι όλη η μετάβαση.","Ίδιο bot. Νέα μηχανή."],
+ru:["Как это работает","Тот же REST API и WebSocket. Код вашего бота не меняется.","Быстрый и лёгкий, с предсказуемой памятью и без сборщика мусора.","Стабильный звук и малая задержка даже при множестве плееров.","Одна строка для переключения","Измените адрес сервера в настройках бота. Вот и вся миграция.","Тот же бот. Новый движок."],
+uk:["Як це працює","Той самий REST API і WebSocket. Код вашого бота не змінюється.","Швидкий і легкий, з передбачуваною пам’яттю та без збирача сміття.","Стабільний звук і мала затримка навіть із багатьма плеєрами.","Один рядок для перемикання","Змініть адресу сервера в налаштуваннях бота. Ось і вся міграція.","Той самий бот. Новий рушій."],
+tr:["Nasıl çalışır","Aynı REST API ve WebSocket. Botunun kodu olduğu gibi kalır.","Hızlı ve hafif, öngörülebilir bellek kullanımı ve çöp toplayıcı yok.","Çok sayıda oynatıcıda bile kararlı ses ve düşük gecikme.","Geçiş için tek satır","Botunun yapılandırmasında sunucu adresini değiştir. Tüm geçiş bu kadar.","Aynı bot. Yeni motor."],
+ar:["كيف يعمل","نفس واجهة REST وWebSocket. كود بوتك يبقى كما هو.","سريع وخفيف، باستهلاك ذاكرة متوقع ودون جامع قمامة.","صوت ثابت وزمن استجابة منخفض حتى مع مشغّلات كثيرة.","سطر واحد للتبديل","غيّر عنوان الخادم في إعدادات بوتك. هذه هي الهجرة كاملة.","نفس البوت. محرك جديد."],
+he:["איך זה עובד","אותו REST API ואותו WebSocket. הקוד של הבוט נשאר כמות שהוא.","מהיר וקל, עם זיכרון צפוי וללא garbage collector.","סאונד יציב והשהיה נמוכה, גם עם הרבה נגנים.","שורה אחת למעבר","מחליפים את כתובת השרת בהגדרות הבוט. זו כל המיגרציה.","אותו בוט. מנוע חדש."],
+fa:["چطور کار می‌کند","همان REST API و WebSocket. کد ربات شما بدون تغییر می‌ماند.","سریع و سبک، با مصرف حافظه قابل پیش‌بینی و بدون زباله‌روب.","صدای پایدار و تأخیر کم، حتی با پخش‌کننده‌های زیاد.","یک خط برای تعویض","آدرس سرور را در تنظیمات ربات تغییر دهید. کل مهاجرت همین است.","همان ربات. موتور تازه."],
+hi:["यह कैसे काम करता है","वही REST API और WebSocket। आपके बॉट का कोड जस का तस रहता है।","तेज़ और हल्का, अनुमानित मेमोरी के साथ और बिना गार्बेज कलेक्टर के।","कई प्लेयर होने पर भी स्थिर ऑडियो और कम लेटेंसी।","बदलने के लिए एक लाइन","अपने बॉट के कॉन्फ़िग में सर्वर का पता बदलें। बस यही पूरा माइग्रेशन है।","वही बॉट। नया इंजन।"],
+zh:["工作原理","相同的 REST API 和 WebSocket，机器人代码保持不变。","快速轻量，内存占用可预测，没有垃圾回收器。","即使玩家众多，音频依然稳定、延迟低。","只需改一行","在机器人配置中修改服务器地址，迁移就完成了。","同一个机器人，全新引擎。"],
+ja:["しくみ","同じREST APIとWebSocket。ボットのコードはそのままです。","高速で軽量。メモリ使用量は予測しやすく、ガベージコレクタもありません。","多数のプレイヤーでも、安定した音声と低遅延。","1行変えるだけ","ボット設定のサーバーアドレスを変えるだけで移行完了です。","同じボット。新しいエンジン。"],
+ko:["작동 방식","동일한 REST API와 WebSocket. 봇 코드는 그대로입니다.","빠르고 가벼우며 메모리 사용량을 예측할 수 있고 가비지 컬렉터가 없습니다.","플레이어가 많아도 안정적인 오디오와 낮은 지연 시간.","한 줄만 바꾸면 됩니다","봇 설정에서 서버 주소만 바꾸면 마이그레이션이 끝납니다.","같은 봇, 새로운 엔진."],
+vi:["Cách hoạt động","Cùng REST API và WebSocket. Mã bot của bạn giữ nguyên.","Nhanh và nhẹ, bộ nhớ dự đoán được và không có bộ thu gom rác.","Âm thanh ổn định, độ trễ thấp ngay cả với nhiều trình phát.","Chỉ cần đổi một dòng","Đổi địa chỉ máy chủ trong cấu hình bot. Vậy là xong việc chuyển đổi.","Cùng một bot. Động cơ mới."],
+th:["วิธีการทำงาน","REST API และ WebSocket เดียวกัน โค้ดบอตของคุณไม่ต้องแก้","เร็วและเบา ใช้หน่วยความจำคาดเดาได้ และไม่มีตัวเก็บขยะ","เสียงนิ่งและหน่วงต่ำ แม้มีผู้เล่นจำนวนมาก","เปลี่ยนแค่บรรทัดเดียว","เปลี่ยนที่อยู่เซิร์ฟเวอร์ในการตั้งค่าบอต แค่นี้ก็ย้ายเสร็จ","บอตเดิม เอนจินใหม่"],
+id:["Cara kerjanya","REST API dan WebSocket yang sama. Kode bot Anda tidak berubah.","Cepat dan ringan, memori yang dapat diprediksi, tanpa garbage collector.","Audio stabil dan latensi rendah, bahkan dengan banyak pemutar.","Cukup ubah satu baris","Ubah alamat server di konfigurasi bot Anda. Itu seluruh migrasinya.","Bot yang sama. Mesin baru."]
+};
+const LG={en:"Legal notice",fr:"Mentions légales",es:"Aviso legal",pt:"Aviso legal",de:"Impressum",it:"Note legali",nl:"Juridische informatie",sv:"Juridisk information",fi:"Oikeudelliset tiedot",pl:"Informacje prawne",cs:"Právní informace",ro:"Mențiuni legale",hu:"Jogi nyilatkozat",el:"Νομική ειδοποίηση",ru:"Правовая информация",uk:"Правова інформація",tr:"Yasal bilgiler",ar:"إشعار قانوني",he:"הודעה משפטית",fa:"اطلاعات حقوقی",hi:"कानूनी सूचना",zh:"法律声明",ja:"法的情報",ko:"법적 고지",vi:"Thông báo pháp lý",th:"ข้อมูลทางกฎหมาย",id:"Informasi hukum"};
+const GH="<a href='https://github.com/Ravalink-Project' target='_blank' rel='noopener'>github.com/Ravalink-Project</a>";
+const LGL={fr:`<h3>Éditeur</h3><p>Le site Ravalink est édité à titre non professionnel par Kua. Contact : via ${GH}.</p><h3>Hébergement</h3><p>Site hébergé sur l’infrastructure de l’éditeur, distribué et protégé par Cloudflare, Inc., 101 Townsend St, San Francisco, CA 94107, États-Unis.</p><h3>Propriété intellectuelle</h3><p>Ravalink vise la compatibilité avec Lavalink, un projet tiers. Le code source et ses licences sont indiqués dans les dépôts du projet sur GitHub. Le nom et le logo Ravalink sont la propriété de l’éditeur. Lavalink et les autres marques citées appartiennent à leurs propriétaires respectifs.</p><h3>Données personnelles</h3><p>Ce site ne dépose pas de cookies de suivi et n’intègre aucun outil d’analyse. Votre choix de langue est conservé uniquement dans votre navigateur. Les polices Geist et Geist Mono sont chargées depuis Google Fonts, ce qui transmet votre adresse IP à Google. Cloudflare peut traiter des données techniques (adresse IP, journaux) pour assurer la sécurité et la diffusion du site.</p><h3>Liens externes</h3><p>Le site renvoie vers GitHub. L’éditeur n’est pas responsable du contenu des sites tiers.</p>`,en:`<h3>Publisher</h3><p>The Ravalink website is published on a non-professional basis by Kua. Contact: via ${GH}.</p><h3>Hosting</h3><p>Hosted on the publisher’s own infrastructure, delivered and protected by Cloudflare, Inc., 101 Townsend St, San Francisco, CA 94107, USA.</p><h3>Intellectual property</h3><p>Ravalink targets compatibility with Lavalink, a third-party project. The source code and its licenses are listed in the project’s GitHub repositories. The Ravalink name and logo belong to the publisher. Lavalink and any other trademarks mentioned belong to their respective owners.</p><h3>Personal data</h3><p>This site sets no tracking cookies and includes no analytics. Your language choice is stored only in your browser. The Geist and Geist Mono fonts are loaded from Google Fonts, which sends your IP address to Google. Cloudflare may process technical data (IP address, logs) to secure and deliver the site.</p><h3>External links</h3><p>The site links to GitHub. The publisher is not responsible for the content of third-party sites.</p>`};
+const $=i=>document.getElementById(i),RTL=["ar","he","fa"],lp=$("lp"),mix=(a,b,t)=>a+(b-a)*t;
+const FW={en:"Follow the build on GitHub",fr:"Suivez le développement sur GitHub",es:"Sigue el desarrollo en GitHub",pt:"Acompanhe o desenvolvimento no GitHub",de:"Verfolge die Entwicklung auf GitHub",it:"Segui lo sviluppo su GitHub",nl:"Volg de ontwikkeling op GitHub",sv:"Följ utvecklingen på GitHub",fi:"Seuraa kehitystä GitHubissa",pl:"Śledź rozwój na GitHubie",cs:"Sledujte vývoj na GitHubu",ro:"Urmărește dezvoltarea pe GitHub",hu:"Kövesd a fejlesztést a GitHubon",el:"Παρακολουθήστε την ανάπτυξη στο GitHub",ru:"Следите за разработкой на GitHub",uk:"Стежте за розробкою на GitHub",tr:"Gelişmeyi GitHub’da takip et",ar:"تابع التطوير على GitHub",he:"עקבו אחרי הפיתוח ב-GitHub",fa:"توسعه را در GitHub دنبال کنید",hi:"GitHub पर विकास को फ़ॉलो करें",zh:"在 GitHub 上关注开发进度",ja:"GitHubで開発を追いかける",ko:"GitHub에서 개발 과정을 지켜보세요",vi:"Theo dõi quá trình phát triển trên GitHub",th:"ติดตามความคืบหน้าบน GitHub",id:"Ikuti perkembangannya di GitHub"};
+const N={
+en:["An audio server for Discord bots, built in Rust.","Ravalink handles audio for your Discord bot in a separate server, so the bot only needs to send it simple instructions.","What is Ravalink?","Playing music in a voice channel means loading, decoding and streaming audio without a break. Ravalink does this heavy work as a standalone audio node: your bot says what to play, and Ravalink sends the sound to Discord.","Your bot tells Ravalink what to play.","Ravalink loads the audio and streams it to Discord.","Your bot keeps handling commands, free from the audio work.","Built for compatibility","Ravalink aims to work with the Lavalink ecosystem. Compatibility is still being built, and some changes may be needed on your side."],
+fr:["Un serveur audio pour bots Discord, écrit en Rust.","Ravalink gère l’audio de votre bot Discord dans un serveur séparé : le bot n’a plus qu’à lui envoyer des instructions simples.","Qu’est-ce que Ravalink ?","Jouer de la musique dans un salon vocal demande de charger, décoder et diffuser du son sans interruption. Ravalink fait ce gros travail comme nœud audio autonome : votre bot dit quoi jouer, et Ravalink envoie le son à Discord.","Votre bot indique à Ravalink quoi jouer.","Ravalink charge l’audio et le diffuse vers Discord.","Votre bot continue de gérer les commandes, sans le travail audio.","Pensé pour la compatibilité","Ravalink vise à fonctionner avec l’écosystème Lavalink. La compatibilité est encore en construction, et certaines modifications peuvent être nécessaires de votre côté."],
+es:["Un servidor de audio para bots de Discord, hecho en Rust.","Ravalink gestiona el audio de tu bot de Discord en un servidor aparte, así que el bot solo necesita enviarle instrucciones sencillas.","¿Qué es Ravalink?","Reproducir música en un canal de voz implica cargar, decodificar y transmitir audio sin pausas. Ravalink hace ese trabajo pesado como nodo de audio independiente: tu bot indica qué reproducir y Ravalink envía el sonido a Discord.","Tu bot le dice a Ravalink qué reproducir.","Ravalink carga el audio y lo transmite a Discord.","Tu bot sigue atendiendo comandos, sin la carga del audio.","Pensado para la compatibilidad","Ravalink aspira a funcionar con el ecosistema de Lavalink. La compatibilidad aún se está construyendo y puede que necesites hacer algunos cambios."],
+pt:["Um servidor de áudio para bots do Discord, feito em Rust.","O Ravalink cuida do áudio do seu bot do Discord em um servidor separado, então o bot só precisa enviar instruções simples.","O que é o Ravalink?","Tocar música em um canal de voz significa carregar, decodificar e transmitir áudio sem pausas. O Ravalink faz esse trabalho pesado como um nó de áudio independente: seu bot diz o que tocar e o Ravalink envia o som ao Discord.","Seu bot diz ao Ravalink o que tocar.","O Ravalink carrega o áudio e o transmite ao Discord.","Seu bot continua tratando comandos, livre do trabalho de áudio.","Feito para a compatibilidade","O Ravalink busca funcionar com o ecossistema do Lavalink. A compatibilidade ainda está sendo construída e algumas mudanças podem ser necessárias do seu lado."],
+de:["Ein Audio-Server für Discord-Bots, gebaut in Rust.","Ravalink übernimmt das Audio deines Discord-Bots auf einem separaten Server, sodass der Bot ihm nur einfache Anweisungen schicken muss.","Was ist Ravalink?","Musik in einem Sprachkanal abzuspielen heißt, Audio ohne Unterbrechung zu laden, zu dekodieren und zu streamen. Ravalink übernimmt diese schwere Arbeit als eigenständiger Audio-Node: Dein Bot sagt, was gespielt werden soll, und Ravalink schickt den Ton an Discord.","Dein Bot sagt Ravalink, was gespielt werden soll.","Ravalink lädt das Audio und streamt es zu Discord.","Dein Bot bearbeitet weiter Befehle, ganz ohne Audio-Last.","Auf Kompatibilität ausgelegt","Ravalink soll mit dem Lavalink-Ökosystem funktionieren. Die Kompatibilität wird noch aufgebaut, und auf deiner Seite können Anpassungen nötig sein."],
+it:["Un server audio per bot Discord, scritto in Rust.","Ravalink gestisce l’audio del tuo bot Discord in un server separato, così il bot deve solo inviargli istruzioni semplici.","Che cos’è Ravalink?","Riprodurre musica in un canale vocale significa caricare, decodificare e trasmettere audio senza interruzioni. Ravalink svolge questo lavoro pesante come nodo audio autonomo: il tuo bot dice cosa riprodurre e Ravalink invia il suono a Discord.","Il tuo bot dice a Ravalink cosa riprodurre.","Ravalink carica l’audio e lo trasmette a Discord.","Il tuo bot continua a gestire i comandi, libero dal lavoro audio.","Pensato per la compatibilità","Ravalink punta a funzionare con l’ecosistema Lavalink. La compatibilità è ancora in costruzione e potrebbero servire alcune modifiche da parte tua."],
+nl:["Een audioserver voor Discord-bots, gebouwd in Rust.","Ravalink regelt de audio van je Discord-bot op een aparte server, zodat de bot alleen simpele opdrachten hoeft te sturen.","Wat is Ravalink?","Muziek afspelen in een spraakkanaal betekent audio zonder onderbreking laden, decoderen en streamen. Ravalink doet dat zware werk als zelfstandige audionode: je bot zegt wat er gespeeld moet worden en Ravalink stuurt het geluid naar Discord.","Je bot vertelt Ravalink wat er gespeeld moet worden.","Ravalink laadt de audio en streamt die naar Discord.","Je bot blijft opdrachten afhandelen, zonder audiowerk.","Gemaakt voor compatibiliteit","Ravalink wil samenwerken met het Lavalink-ecosysteem. De compatibiliteit wordt nog gebouwd en aan jouw kant zijn mogelijk aanpassingen nodig."],
+sv:["En ljudserver för Discord-botar, byggd i Rust.","Ravalink sköter ljudet åt din Discord-bot på en separat server, så boten bara behöver skicka enkla instruktioner.","Vad är Ravalink?","Att spela musik i en röstkanal innebär att ladda, avkoda och strömma ljud utan avbrott. Ravalink gör det tunga jobbet som en fristående ljudnod: din bot säger vad som ska spelas och Ravalink skickar ljudet till Discord.","Din bot talar om för Ravalink vad som ska spelas.","Ravalink laddar ljudet och strömmar det till Discord.","Din bot fortsätter hantera kommandon, utan ljudarbetet.","Byggd för kompatibilitet","Ravalink siktar på att fungera med Lavalink-ekosystemet. Kompatibiliteten byggs fortfarande och vissa ändringar kan behövas hos dig."],
+fi:["Äänipalvelin Discord-boteille, tehty Rustilla.","Ravalink hoitaa Discord-bottisi äänen erillisellä palvelimella, joten botin tarvitsee vain lähettää sille yksinkertaisia ohjeita.","Mikä Ravalink on?","Musiikin soittaminen puhekanavalla tarkoittaa äänen lataamista, purkamista ja suoratoistoa keskeytyksittä. Ravalink hoitaa tämän raskaan työn itsenäisenä äänisolmuna: bottisi kertoo, mitä soitetaan, ja Ravalink lähettää äänen Discordiin.","Bottisi kertoo Ravalinkille, mitä soitetaan.","Ravalink lataa äänen ja suoratoistaa sen Discordiin.","Bottisi käsittelee komentoja ilman äänityötä.","Suunniteltu yhteensopivuutta varten","Ravalink tähtää toimimaan Lavalink-ekosysteemin kanssa. Yhteensopivuutta rakennetaan vielä, ja sinun puolellasi voi tarvita muutoksia."],
+pl:["Serwer audio dla botów Discorda, napisany w Rust.","Ravalink obsługuje dźwięk twojego bota Discorda na osobnym serwerze, więc bot musi tylko wysyłać mu proste polecenia.","Czym jest Ravalink?","Odtwarzanie muzyki na kanale głosowym wymaga ciągłego ładowania, dekodowania i strumieniowania dźwięku. Ravalink wykonuje tę ciężką pracę jako samodzielny węzeł audio: twój bot mówi, co grać, a Ravalink wysyła dźwięk do Discorda.","Twój bot mówi Ravalinkowi, co odtworzyć.","Ravalink ładuje dźwięk i przesyła go do Discorda.","Twój bot dalej obsługuje komendy, bez pracy nad dźwiękiem.","Stworzony z myślą o zgodności","Ravalink ma działać z ekosystemem Lavalink. Zgodność jest wciąż budowana i po twojej stronie mogą być potrzebne zmiany."],
+cs:["Audio server pro boty Discordu, napsaný v Rustu.","Ravalink obsluhuje zvuk vašeho bota na Discordu na samostatném serveru, takže mu bot jen posílá jednoduché pokyny.","Co je Ravalink?","Přehrávání hudby v hlasovém kanálu znamená bez přerušení načítat, dekódovat a streamovat zvuk. Ravalink tuto těžkou práci dělá jako samostatný audio uzel: váš bot řekne, co hrát, a Ravalink pošle zvuk na Discord.","Váš bot řekne Ravalinku, co má hrát.","Ravalink načte zvuk a streamuje ho na Discord.","Váš bot dál vyřizuje příkazy, bez práce se zvukem.","Navrženo pro kompatibilitu","Ravalink se snaží fungovat s ekosystémem Lavalink. Kompatibilita se stále buduje a na vaší straně mohou být potřeba úpravy."],
+ro:["Un server audio pentru boți Discord, scris în Rust.","Ravalink se ocupă de sunetul botului tău Discord pe un server separat, așa că botul trebuie doar să îi trimită instrucțiuni simple.","Ce este Ravalink?","Redarea muzicii într-un canal vocal înseamnă încărcarea, decodarea și transmiterea sunetului fără întrerupere. Ravalink face această muncă grea ca nod audio independent: botul tău spune ce să redea, iar Ravalink trimite sunetul către Discord.","Botul tău îi spune lui Ravalink ce să redea.","Ravalink încarcă sunetul și îl transmite către Discord.","Botul tău continuă să primească comenzi, fără munca de sunet.","Gândit pentru compatibilitate","Ravalink își propune să funcționeze cu ecosistemul Lavalink. Compatibilitatea este încă în lucru și pot fi necesare unele modificări din partea ta."],
+hu:["Hangszerver Discord-botokhoz, Rustban írva.","A Ravalink külön szerveren kezeli a Discord-botod hangját, így a botnak csak egyszerű utasításokat kell küldenie neki.","Mi az a Ravalink?","A zenelejátszás egy hangcsatornán azt jelenti, hogy megszakítás nélkül kell betölteni, dekódolni és streamelni a hangot. A Ravalink ezt a nehéz munkát önálló hangcsomópontként végzi: a botod megmondja, mit játsszon, a Ravalink pedig elküldi a hangot a Discordnak.","A botod megmondja a Ravalinknek, mit játsszon.","A Ravalink betölti a hangot, és streameli a Discordnak.","A botod tovább kezeli a parancsokat, hangfeldolgozás nélkül.","Kompatibilitásra tervezve","A Ravalink célja, hogy működjön a Lavalink-ökoszisztémával. A kompatibilitás még épül, és nálad is lehetnek szükséges módosítások."],
+el:["Ένας διακομιστής ήχου για bots του Discord, γραμμένος σε Rust.","Το Ravalink διαχειρίζεται τον ήχο του bot σου στο Discord σε ξεχωριστό διακομιστή, ώστε το bot να στέλνει μόνο απλές εντολές.","Τι είναι το Ravalink;","Η αναπαραγωγή μουσικής σε φωνητικό κανάλι σημαίνει φόρτωση, αποκωδικοποίηση και ροή ήχου χωρίς διακοπή. Το Ravalink κάνει αυτή τη βαριά δουλειά ως αυτόνομος κόμβος ήχου: το bot σου λέει τι να παίξει και το Ravalink στέλνει τον ήχο στο Discord.","Το bot σου λέει στο Ravalink τι να παίξει.","Το Ravalink φορτώνει τον ήχο και τον στέλνει στο Discord.","Το bot σου συνεχίζει να χειρίζεται εντολές, χωρίς φόρτο ήχου.","Σχεδιασμένο για συμβατότητα","Το Ravalink στοχεύει να λειτουργεί με το οικοσύστημα του Lavalink. Η συμβατότητα βρίσκεται ακόμη υπό κατασκευή και μπορεί να χρειαστούν αλλαγές από τη μεριά σου."],
+ru:["Аудиосервер для ботов Discord, написанный на Rust.","Ravalink обрабатывает звук вашего Discord-бота на отдельном сервере, поэтому боту достаточно отправлять ему простые команды.","Что такое Ravalink?","Чтобы играть музыку в голосовом канале, нужно без пауз загружать, декодировать и передавать звук. Ravalink берёт эту тяжёлую работу на себя как автономный аудиоузел: бот говорит, что играть, а Ravalink отправляет звук в Discord.","Ваш бот сообщает Ravalink, что играть.","Ravalink загружает звук и передаёт его в Discord.","Ваш бот продолжает обрабатывать команды без звуковой нагрузки.","Создан для совместимости","Ravalink стремится работать с экосистемой Lavalink. Совместимость ещё разрабатывается, и с вашей стороны могут потребоваться изменения."],
+uk:["Аудіосервер для ботів Discord, написаний на Rust.","Ravalink обробляє звук вашого Discord-бота на окремому сервері, тож боту достатньо надсилати йому прості команди.","Що таке Ravalink?","Щоб грати музику в голосовому каналі, потрібно без пауз завантажувати, декодувати й передавати звук. Ravalink бере цю важку роботу на себе як автономний аудіовузол: бот каже, що грати, а Ravalink надсилає звук до Discord.","Ваш бот повідомляє Ravalink, що грати.","Ravalink завантажує звук і передає його до Discord.","Ваш бот і далі обробляє команди без звукового навантаження.","Створений для сумісності","Ravalink прагне працювати з екосистемою Lavalink. Сумісність ще розробляється, і з вашого боку можуть знадобитися зміни."],
+tr:["Discord botları için bir ses sunucusu, Rust ile yazıldı.","Ravalink, Discord botunun sesini ayrı bir sunucuda yönetir; böylece botun ona yalnızca basit komutlar göndermesi yeterli olur.","Ravalink nedir?","Bir ses kanalında müzik çalmak, sesi kesintisiz yüklemek, çözmek ve aktarmak demektir. Ravalink bu ağır işi bağımsız bir ses düğümü olarak yapar: botun ne çalınacağını söyler, Ravalink sesi Discord’a gönderir.","Botun, Ravalink’e ne çalacağını söyler.","Ravalink sesi yükler ve Discord’a aktarır.","Botun ses işinden bağımsız olarak komutlara yanıt vermeye devam eder.","Uyumluluk için tasarlandı","Ravalink, Lavalink ekosistemiyle çalışmayı hedefliyor. Uyumluluk hâlâ geliştiriliyor ve senin tarafında bazı değişiklikler gerekebilir."],
+ar:["خادم صوت لبوتات ديسكورد، مكتوب بلغة Rust.","يتولّى Ravalink صوت بوت ديسكورد الخاص بك على خادم منفصل، فيكفي أن يرسل إليه البوت تعليمات بسيطة.","ما هو Ravalink؟","تشغيل الموسيقى في قناة صوتية يعني تحميل الصوت وفك ترميزه وبثّه دون انقطاع. يقوم Ravalink بهذا العمل الشاق كعقدة صوت مستقلة: يحدّد بوتك ما يُشغَّل، ويرسل Ravalink الصوت إلى ديسكورد.","يخبر بوتك Ravalink بما يجب تشغيله.","يحمّل Ravalink الصوت ويبثّه إلى ديسكورد.","يواصل بوتك التعامل مع الأوامر دون عبء الصوت.","مصمَّم للتوافق","يهدف Ravalink إلى العمل مع منظومة Lavalink. لا يزال التوافق قيد البناء، وقد تلزم بعض التعديلات من جانبك."],
+he:["שרת שמע לבוטים של דיסקורד, כתוב ב-Rust.","Ravalink מטפל בשמע של הבוט שלך בדיסקורד בשרת נפרד, כך שהבוט רק צריך לשלוח לו הוראות פשוטות.","מהו Ravalink?","ניגון מוזיקה בערוץ קולי פירושו טעינה, פענוח והזרמה של שמע ללא הפסקה. Ravalink עושה את העבודה הכבדה הזו כצומת שמע עצמאי: הבוט שלך אומר מה לנגן, ו-Ravalink שולח את הצליל לדיסקורד.","הבוט שלך אומר ל-Ravalink מה לנגן.","Ravalink טוען את השמע ומזרים אותו לדיסקורד.","הבוט שלך ממשיך לטפל בפקודות, בלי עומס השמע.","נבנה לתאימות","Ravalink שואף לעבוד עם המערכת האקולוגית של Lavalink. התאימות עדיין בבנייה, ויתכן שיידרשו שינויים בצד שלך."],
+fa:["سرور صوتی برای ربات‌های دیسکورد، نوشته‌شده با Rust.","Ravalink صدای ربات دیسکورد شما را روی یک سرور جداگانه مدیریت می‌کند و ربات فقط باید دستورهای ساده برایش بفرستد.","Ravalink چیست؟","پخش موسیقی در کانال صوتی یعنی بارگیری، رمزگشایی و پخش بی‌وقفهٔ صدا. Ravalink این کار سنگین را به‌عنوان یک گرهٔ صوتی مستقل انجام می‌دهد: ربات شما می‌گوید چه پخش شود و Ravalink صدا را به دیسکورد می‌فرستد.","ربات شما به Ravalink می‌گوید چه پخش کند.","Ravalink صدا را بارگیری می‌کند و به دیسکورد پخش می‌کند.","ربات شما بدون بار صدا به دستورها پاسخ می‌دهد.","ساخته‌شده برای سازگاری","Ravalink می‌خواهد با اکوسیستم Lavalink کار کند. سازگاری هنوز در حال ساخت است و ممکن است در سمت شما تغییراتی لازم باشد."],
+hi:["Discord बॉट्स के लिए ऑडियो सर्वर, Rust में बना।","Ravalink आपके Discord बॉट का ऑडियो एक अलग सर्वर पर संभालता है, इसलिए बॉट को बस सरल निर्देश भेजने होते हैं।","Ravalink क्या है?","वॉइस चैनल में संगीत चलाने का मतलब है बिना रुके ऑडियो लोड करना, डिकोड करना और स्ट्रीम करना। Ravalink यह भारी काम एक स्वतंत्र ऑडियो नोड के रूप में करता है: आपका बॉट बताता है कि क्या चलाना है, और Ravalink आवाज़ Discord तक भेजता है।","आपका बॉट Ravalink को बताता है कि क्या चलाना है।","Ravalink ऑडियो लोड करके Discord तक स्ट्रीम करता है।","आपका बॉट ऑडियो के काम के बिना कमांड संभालता रहता है।","संगतता के लिए बना","Ravalink का लक्ष्य Lavalink इकोसिस्टम के साथ काम करना है। संगतता अभी बन रही है, और आपकी ओर से कुछ बदलाव ज़रूरी हो सकते हैं।"],
+zh:["面向 Discord 机器人的音频服务器，用 Rust 编写。","Ravalink 在独立的服务器上处理你的 Discord 机器人的音频，机器人只需向它发送简单的指令。","Ravalink 是什么？","在语音频道播放音乐，意味着要不间断地加载、解码并推送音频。Ravalink 作为独立的音频节点承担这些繁重工作：你的机器人说明要播放什么，Ravalink 把声音发送给 Discord。","你的机器人告诉 Ravalink 要播放什么。","Ravalink 加载音频并推送给 Discord。","你的机器人继续处理命令，不再承担音频负担。","为兼容性而设计","Ravalink 的目标是与 Lavalink 生态协同工作。兼容性仍在构建中，你这边可能需要做一些改动。"],
+ja:["Discordボット向けのオーディオサーバー、Rust製。","Ravalinkは、Discordボットの音声を別のサーバーで処理します。ボットは簡単な指示を送るだけです。","Ravalinkとは？","ボイスチャンネルで音楽を再生するには、音声を途切れなく読み込み、デコードし、配信し続ける必要があります。Ravalinkはこの重い処理を独立したオーディオノードとして担います。ボットが再生する内容を伝え、RavalinkがDiscordへ音を送ります。","ボットが何を再生するかをRavalinkに伝えます。","Ravalinkが音声を読み込み、Discordへ配信します。","ボットは音声処理から解放され、コマンド処理に専念できます。","互換性を重視して設計","RavalinkはLavalinkのエコシステムとの連携を目指しています。互換性は構築の途中で、あなた側で変更が必要になる場合があります。"],
+ko:["Discord 봇을 위한 오디오 서버, Rust로 제작.","Ravalink는 Discord 봇의 오디오를 별도 서버에서 처리하므로, 봇은 간단한 지시만 보내면 됩니다.","Ravalink란?","음성 채널에서 음악을 재생하려면 끊김 없이 오디오를 불러오고, 디코딩하고, 스트리밍해야 합니다. Ravalink는 이 무거운 작업을 독립 오디오 노드로 처리합니다. 봇이 무엇을 재생할지 알려 주면 Ravalink가 소리를 Discord로 보냅니다.","봇이 Ravalink에 무엇을 재생할지 알려 줍니다.","Ravalink가 오디오를 불러와 Discord로 스트리밍합니다.","봇은 오디오 작업 없이 명령 처리에 집중합니다.","호환성을 위해 설계","Ravalink는 Lavalink 생태계와 함께 동작하는 것을 목표로 합니다. 호환성은 아직 구축 중이며, 사용자 쪽에서 일부 수정이 필요할 수 있습니다."],
+vi:["Máy chủ âm thanh cho bot Discord, viết bằng Rust.","Ravalink xử lý âm thanh cho bot Discord của bạn trên một máy chủ riêng, nên bot chỉ cần gửi cho nó những chỉ thị đơn giản.","Ravalink là gì?","Phát nhạc trong kênh thoại nghĩa là tải, giải mã và truyền âm thanh liên tục không ngắt quãng. Ravalink đảm nhận phần việc nặng này như một nút âm thanh độc lập: bot của bạn cho biết cần phát gì, Ravalink gửi âm thanh tới Discord.","Bot của bạn cho Ravalink biết cần phát gì.","Ravalink tải âm thanh và truyền tới Discord.","Bot của bạn tiếp tục xử lý lệnh, không phải gánh việc âm thanh.","Thiết kế để tương thích","Ravalink hướng tới việc hoạt động với hệ sinh thái Lavalink. Khả năng tương thích vẫn đang được xây dựng và bạn có thể cần thay đổi một vài thứ ở phía mình."],
+th:["เซิร์ฟเวอร์เสียงสำหรับบอต Discord เขียนด้วย Rust","Ravalink จัดการเสียงให้บอต Discord ของคุณบนเซิร์ฟเวอร์แยกต่างหาก บอตจึงแค่ส่งคำสั่งง่ายๆ ให้มัน","Ravalink คืออะไร","การเล่นเพลงในห้องเสียงหมายถึงการโหลด ถอดรหัส และสตรีมเสียงอย่างต่อเนื่องไม่มีสะดุด Ravalink ทำงานหนักนี้ในฐานะโหนดเสียงอิสระ บอตของคุณบอกว่าจะเล่นอะไร แล้ว Ravalink ส่งเสียงไปที่ Discord","บอตของคุณบอก Ravalink ว่าจะเล่นอะไร","Ravalink โหลดเสียงแล้วสตรีมไปที่ Discord","บอตของคุณตอบคำสั่งต่อได้โดยไม่ต้องแบกงานเสียง","ออกแบบเพื่อความเข้ากันได้","Ravalink ตั้งเป้าทำงานร่วมกับระบบนิเวศของ Lavalink ความเข้ากันได้ยังอยู่ระหว่างพัฒนา และอาจต้องมีการปรับบางอย่างในฝั่งของคุณ"],
+id:["Server audio untuk bot Discord, dibuat dengan Rust.","Ravalink menangani audio bot Discord Anda di server terpisah, sehingga bot hanya perlu mengirim instruksi sederhana.","Apa itu Ravalink?","Memutar musik di voice channel berarti memuat, men-decode, dan men-stream audio tanpa jeda. Ravalink mengerjakan tugas berat ini sebagai node audio mandiri: bot Anda menyebut apa yang diputar, lalu Ravalink mengirim suaranya ke Discord.","Bot Anda memberi tahu Ravalink apa yang harus diputar.","Ravalink memuat audio dan men-stream-nya ke Discord.","Bot Anda tetap menangani perintah tanpa beban audio.","Dirancang untuk kompatibilitas","Ravalink bertujuan bekerja dengan ekosistem Lavalink. Kompatibilitas masih dibangun, dan mungkin ada perubahan yang perlu dilakukan di sisi Anda."]
+};
+const M={
+en:["A native program that runs on its own, without Java or a JVM.","Transparent progress","Compatibility gaps are listed openly on GitHub, and performance claims will wait for real benchmarks.","Contributors","The 10 most recent people who contributed to Ravalink. Click a profile to see their work on GitHub."],
+fr:["Un programme natif qui fonctionne seul, sans Java ni JVM.","Une progression transparente","Les écarts de compatibilité sont listés ouvertement sur GitHub, et les promesses de performance attendront de vrais benchmarks.","Contributeurs","Les 10 dernières personnes ayant contribué à Ravalink. Cliquez sur un profil pour voir son travail sur GitHub."],
+es:["Un programa nativo que funciona por sí solo, sin Java ni JVM.","Avance transparente","Las diferencias de compatibilidad se enumeran abiertamente en GitHub, y las afirmaciones de rendimiento esperarán a benchmarks reales.","Colaboradores","Las 10 últimas personas que han contribuido a Ravalink. Haz clic en un perfil para ver su trabajo en GitHub."],
+pt:["Um programa nativo que roda sozinho, sem Java nem JVM.","Progresso transparente","As lacunas de compatibilidade são listadas abertamente no GitHub, e as afirmações de desempenho esperarão benchmarks reais.","Colaboradores","As 10 pessoas mais recentes que contribuíram para o Ravalink. Clique em um perfil para ver o trabalho no GitHub."],
+de:["Ein natives Programm, das eigenständig läuft, ganz ohne Java oder JVM.","Transparenter Fortschritt","Kompatibilitätslücken sind offen auf GitHub aufgelistet, und Leistungsversprechen warten auf echte Benchmarks.","Mitwirkende","Die 10 zuletzt beteiligten Personen an Ravalink. Klicke auf ein Profil, um die Arbeit auf GitHub zu sehen."],
+it:["Un programma nativo che funziona da solo, senza Java né JVM.","Progressi trasparenti","Le lacune di compatibilità sono elencate apertamente su GitHub e le affermazioni sulle prestazioni aspetteranno benchmark reali.","Contributori","Le 10 persone più recenti che hanno contribuito a Ravalink. Clicca su un profilo per vedere il lavoro su GitHub."],
+nl:["Een native programma dat zelfstandig draait, zonder Java of JVM.","Transparante voortgang","Compatibiliteitslacunes staan openlijk op GitHub en prestatiebeloften wachten op echte benchmarks.","Bijdragers","De 10 meest recente mensen die aan Ravalink hebben bijgedragen. Klik op een profiel om hun werk op GitHub te zien."],
+sv:["Ett inbyggt program som körs på egen hand, utan Java eller JVM.","Öppna framsteg","Kompatibilitetsluckor listas öppet på GitHub, och prestandalöften får vänta på riktiga benchmarks.","Bidragsgivare","De 10 senaste personerna som bidragit till Ravalink. Klicka på en profil för att se deras arbete på GitHub."],
+fi:["Natiivi ohjelma, joka toimii itsenäisesti ilman Javaa tai JVM:ää.","Avoin eteneminen","Yhteensopivuusaukot on listattu avoimesti GitHubissa, ja suorituskykylupaukset odottavat oikeita vertailutestejä.","Kehittäjät","10 viimeisintä Ravalinkiin osallistunutta henkilöä. Klikkaa profiilia nähdäksesi heidän työnsä GitHubissa."],
+pl:["Natywny program, który działa samodzielnie, bez Javy i JVM.","Przejrzysty postęp","Luki w zgodności są jawnie wypisane na GitHubie, a deklaracje wydajności poczekają na prawdziwe benchmarki.","Współtwórcy","10 ostatnich osób, które wniosły wkład w Ravalink. Kliknij profil, aby zobaczyć ich pracę na GitHubie."],
+cs:["Nativní program, který běží samostatně, bez Javy a JVM.","Průhledný postup","Mezery v kompatibilitě jsou otevřeně uvedeny na GitHubu a tvrzení o výkonu počkají na skutečné benchmarky.","Přispěvatelé","10 posledních lidí, kteří přispěli do Ravalinku. Kliknutím na profil uvidíte jejich práci na GitHubu."],
+ro:["Un program nativ care rulează de sine stătător, fără Java sau JVM.","Progres transparent","Lacunele de compatibilitate sunt listate deschis pe GitHub, iar afirmațiile despre performanță vor aștepta benchmark-uri reale.","Contribuitori","Ultimele 10 persoane care au contribuit la Ravalink. Apasă pe un profil pentru a vedea munca lor pe GitHub."],
+hu:["Natív program, amely önállóan fut, Java és JVM nélkül.","Átlátható haladás","A kompatibilitási hiányosságok nyíltan szerepelnek a GitHubon, a teljesítménnyel kapcsolatos állítások pedig valódi benchmarkokra várnak.","Közreműködők","A Ravalinkhez legutóbb hozzájáruló 10 ember. Kattints egy profilra, hogy lásd a munkájukat a GitHubon."],
+el:["Ένα εγγενές πρόγραμμα που τρέχει αυτόνομα, χωρίς Java ή JVM.","Διαφανής πρόοδος","Τα κενά συμβατότητας αναφέρονται ανοιχτά στο GitHub και οι ισχυρισμοί απόδοσης θα περιμένουν πραγματικά benchmarks.","Συνεισφέροντες","Τα 10 πιο πρόσφατα άτομα που συνεισέφεραν στο Ravalink. Πάτησε ένα προφίλ για να δεις τη δουλειά τους στο GitHub."],
+ru:["Нативная программа, которая работает самостоятельно, без Java и JVM.","Прозрачный прогресс","Пробелы в совместимости открыто перечислены на GitHub, а заявления о производительности подождут настоящих бенчмарков.","Участники","10 последних людей, внёсших вклад в Ravalink. Нажмите на профиль, чтобы увидеть их работу на GitHub."],
+uk:["Нативна програма, яка працює самостійно, без Java та JVM.","Прозорий прогрес","Прогалини в сумісності відкрито перелічені на GitHub, а заяви про продуктивність чекатимуть справжніх бенчмарків.","Учасники","10 останніх людей, які зробили внесок у Ravalink. Натисніть на профіль, щоб побачити їхню роботу на GitHub."],
+tr:["Java veya JVM olmadan, kendi başına çalışan yerel bir program.","Şeffaf ilerleme","Uyumluluk eksikleri GitHub’da açıkça listelenir; performans iddiaları gerçek kıyaslamaları bekleyecek.","Katkıda bulunanlar","Ravalink’e en son katkıda bulunan 10 kişi. Çalışmalarını GitHub’da görmek için bir profile tıkla."],
+ar:["برنامج أصلي يعمل بمفرده، دون Java أو JVM.","تقدّم شفاف","فجوات التوافق مدرجة علنًا على GitHub، وستنتظر ادعاءات الأداء اختبارات قياس حقيقية.","المساهمون","أحدث 10 أشخاص ساهموا في Ravalink. انقر على ملف شخصي لرؤية عملهم على GitHub."],
+he:["תוכנה מקורית שרצה בכוחות עצמה, ללא Java או JVM.","התקדמות שקופה","פערי התאימות רשומים בגלוי ב-GitHub, וטענות ביצועים יחכו למבחני ביצועים אמיתיים.","תורמים","10 האנשים האחרונים שתרמו ל-Ravalink. לחצו על פרופיל כדי לראות את עבודתם ב-GitHub."],
+fa:["برنامه‌ای بومی که به‌تنهایی اجرا می‌شود، بدون Java یا JVM.","پیشرفت شفاف","شکاف‌های سازگاری آشکارا در GitHub فهرست شده‌اند و ادعاهای عملکرد منتظر بنچمارک‌های واقعی می‌مانند.","مشارکت‌کنندگان","۱۰ نفر آخری که در Ravalink مشارکت کرده‌اند. برای دیدن کارشان در GitHub روی پروفایل کلیک کنید."],
+hi:["एक नेटिव प्रोग्राम जो अकेले चलता है, बिना Java या JVM के।","पारदर्शी प्रगति","संगतता की कमियाँ GitHub पर खुले तौर पर सूचीबद्ध हैं, और प्रदर्शन के दावे असली बेंचमार्क का इंतज़ार करेंगे।","योगदानकर्ता","Ravalink में हाल ही में योगदान देने वाले 10 लोग। उनका काम GitHub पर देखने के लिए प्रोफ़ाइल पर क्लिक करें।"],
+zh:["原生程序，可独立运行，无需 Java 或 JVM。","进展透明","兼容性差距在 GitHub 上公开列出，性能方面的说法将等待真实的基准测试。","贡献者","最近为 Ravalink 做出贡献的 10 位成员。点击头像可在 GitHub 上查看他们的工作。"],
+ja:["Java や JVM なしで単体で動作するネイティブプログラム。","透明な進捗","互換性の不足点は GitHub で公開されており、性能に関する主張は実際のベンチマークを待ちます。","コントリビューター","Ravalink に最近貢献した10人。プロフィールをクリックすると GitHub で作業内容を確認できます。"],
+ko:["Java나 JVM 없이 단독으로 실행되는 네이티브 프로그램.","투명한 진행 상황","호환성 격차는 GitHub에 공개적으로 정리되어 있으며, 성능에 관한 주장은 실제 벤치마크를 기다립니다.","기여자","Ravalink에 가장 최근 기여한 10명. 프로필을 클릭하면 GitHub에서 작업을 볼 수 있습니다."],
+vi:["Một chương trình gốc chạy độc lập, không cần Java hay JVM.","Tiến độ minh bạch","Các khoảng trống về tương thích được liệt kê công khai trên GitHub, còn các tuyên bố về hiệu năng sẽ chờ đến khi có benchmark thực tế.","Người đóng góp","10 người đóng góp gần đây nhất cho Ravalink. Nhấp vào hồ sơ để xem công việc của họ trên GitHub."],
+th:["โปรแกรมเนทีฟที่ทำงานได้ด้วยตัวเอง ไม่ต้องใช้ Java หรือ JVM","ความคืบหน้าที่โปร่งใส","ช่องว่างด้านความเข้ากันได้ถูกระบุไว้อย่างเปิดเผยบน GitHub และคำกล่าวอ้างเรื่องประสิทธิภาพจะรอผลเบนช์มาร์กจริง","ผู้ร่วมพัฒนา","10 คนล่าสุดที่ร่วมพัฒนา Ravalink คลิกที่โปรไฟล์เพื่อดูผลงานบน GitHub"],
+id:["Program native yang berjalan sendiri, tanpa Java atau JVM.","Kemajuan yang transparan","Celah kompatibilitas dicantumkan secara terbuka di GitHub, dan klaim performa akan menunggu benchmark yang nyata.","Kontributor","10 orang terbaru yang berkontribusi pada Ravalink. Klik profil untuk melihat pekerjaan mereka di GitHub."]
+};
+/* logo symbol */
+document.body.insertAdjacentHTML("afterbegin",'<svg width="0" height="0" style="position:absolute" aria-hidden="true"><defs><linearGradient id="g" x1="0" y1="0" x2="1" y2="1"><stop offset="0" stop-color="#0a1a6b"/><stop offset=".5" stop-color="#5a14c8"/><stop offset="1" stop-color="#d200f5"/></linearGradient><symbol id="r" viewBox="0 0 1024 1024"><rect width="1024" height="1024" fill="url(#g)"/><path fill="#fff" d="M256 256h420v87h-420zM348 383h82v108h-82zM595 343h173v68h-173zM693 411h75v55h-75zM595 466h173v65h-173zM256 531h420v64h-420zM256 595h339v24h-339zM256 619h73v149h-73zM514 619h146l108 149H614z"/></symbol></defs></svg>');
+/* two-tone headings */
+function tone(el,t,anim){el.textContent="";const q=t.match(/^(.+?[,.:;،。，、।!?])\s*(.+)$/),ps=q?[q[1],q[2]]:[t];
+  ps.forEach((s,n)=>{const l=document.createElement("span"),i=document.createElement("i");l.className="l";i.textContent=s;if(n)i.className="g";i.style.setProperty("--n",n);l.appendChild(i);el.appendChild(l)})}
+/* language panel + marquee */
+for(const k in L){const b=document.createElement("button");b.type="button";b.dataset.k=k;b.lang=k;b.textContent=L[k][0];b.onclick=()=>{apply(k);closeAll()};lp.appendChild(b)}
+function apply(k){
+  const d=L[k],e=L2[k]||L2.en,n=N[k]||N.en,mm=M[k]||M.en,lg=LG[k]||LG.en;
+  document.documentElement.lang=k;document.documentElement.dir=RTL.includes(k)?"rtl":"ltr";
+  tone($("h"),n[0]);$("p").textContent=n[1];$("s").textContent=d[3];$("w1").textContent=n[2];$("w2").textContent=n[3];
+  $("t1").textContent=e[0];[4,5,6].forEach((j,i)=>$("s"+(i+1)).textContent=n[j]);
+  $("b").textContent=d[5];$("c1d").textContent=mm[0];$("v1t").textContent=n[7];$("v1d").textContent=n[8];
+  $("c3t").textContent=mm[1];$("c3d").textContent=mm[2];$("ct").textContent=mm[3];$("cd").textContent=mm[4];
+  $("fw").textContent=FW[k]||FW.en;
+  document.querySelectorAll(".k1").forEach(x=>x.textContent=e[0]);
+  document.querySelectorAll(".ctl").forEach(x=>x.textContent=mm[3]);
+  document.querySelectorAll(".lgl").forEach(x=>x.textContent=lg);
+  document.querySelectorAll(".lgn").forEach(x=>x.textContent=d[0]);
+  document.querySelectorAll(".ln").forEach(x=>x.textContent=k.toUpperCase());
+  lp.querySelectorAll("button").forEach(b=>b.classList.toggle("on",b.dataset.k===k));
+  $("lbd").innerHTML=LGL[k==="fr"?"fr":"en"];
+  try{localStorage.setItem("rl-lang",k)}catch(_){}
+}
+let start="en";
+try{start=localStorage.getItem("rl-lang")||""}catch(_){}
+if(!L[start]){start="en";for(const n of navigator.languages||[navigator.language]){const c=(n||"").slice(0,2).toLowerCase();if(L[c]){start=c;break}}}
+/* menus */
+const lb=$("lb"),bg=$("bg"),lm=$("lm"),bt=$("bt");
+function closeAll(){lp.classList.remove("open");if(!document.body.classList.contains("mo"))bg.classList.remove("open");lb.setAttribute("aria-expanded","false")}
+function closeMenu(){document.body.classList.remove("mo");if(!lp.classList.contains("open"))bg.classList.remove("open");bt.setAttribute("aria-expanded","false")}
+lb.onclick=()=>{const o=!lp.classList.contains("open");lp.classList.toggle("open",o);bg.classList.toggle("open",o);lb.setAttribute("aria-expanded",o)};
+bg.onclick=()=>{closeAll();closeMenu()};
+bt.onclick=()=>{const o=document.body.classList.toggle("mo");bg.classList.toggle("open",o);bt.setAttribute("aria-expanded",o)};
+document.querySelectorAll(".mm a").forEach(a=>a.addEventListener("click",closeMenu));
+document.querySelectorAll("[data-open]").forEach(b=>b.addEventListener("click",()=>{closeMenu();lm.showModal()}));
+$("lx").onclick=()=>lm.close();
+lm.addEventListener("click",ev=>{if(ev.target===lm)lm.close()});
+addEventListener("keydown",ev=>{if(ev.key==="Escape"){closeAll();closeMenu()}});
+const onS=()=>document.body.classList.toggle("s",scrollY>30);addEventListener("scroll",onS,{passive:true});onS();
+const reduce=matchMedia("(prefers-reduced-motion:reduce)").matches;let m=1,paused=false;
+/* dot-matrix canvases */
+const cvs=[];let px=-999,py=-999;
+function fit(o){const r=o.el.getBoundingClientRect(),d=Math.min(devicePixelRatio||1,2);o.w=r.width;o.h=r.height;o.el.width=Math.round(r.width*d);o.el.height=Math.round(r.height*d);o.c.setTransform(d,0,0,d,0,0);if(o.prep)o.prep(o)}
+function reg(id,draw,prep){const el=$(id),o={el,c:el.getContext("2d"),draw,prep,vis:false,w:0,h:0};new IntersectionObserver(e=>{o.vis=e[0].isIntersecting}).observe(el);cvs.push(o);fit(o)}
+function redraw(){cvs.forEach(o=>o.draw(o,0))}
+const lerp=(a,b,t)=>a+(b-a)*t;
+function pal(n){const a=[];for(let i=0;i<n;i++){const u=i/(n-1);a.push("rgb("+[0,1,2].map(j=>Math.round(lerp([112,114,150][j],lerp([77,61,255][j],[200,0,240][j],u),m))).join(",")+")")}return a}
+function field(o,t){
+  const c=o.c,w=o.w,h=o.h,S=w<640?10:12,tt=t*.0004,P=pal(6);c.clearRect(0,0,w,h);
+  for(let y=S/2;y<h;y+=S)for(let x=S/2;x<w;x+=S){
+    const v=Math.sin(x*.011+tt*1.3)+Math.sin(y*.013-tt)+Math.sin((x+y)*.007+tt*.8)+Math.sin(Math.hypot(x-w*.8,y-h*.3)*.012-tt*1.5),
+    f=(v+8)%1.3,k=1-Math.min(f,1.3-f)/.18;if(k<.08)continue;
+    const g=Math.max(0,1-Math.hypot(x-px,y-py)/170),a=k*(.12+.55*x/w)+g*.5*k;
+    c.globalAlpha=Math.min(a,.9);c.fillStyle=P[Math.min(5,Math.floor((x/w*.8+y/h*.3)*6))];const s=2+2.6*k;c.fillRect(x-s/2,y-s/2,s,s)}
+  c.globalAlpha=1}
+function arch(o,t){
+  const c=o.c,w=o.w,h=o.h,S=10,P=pal(6);m=Math.max(m,.9);c.clearRect(0,0,w,h);
+  for(let y=S/2;y<h;y+=S)for(let x=S/2;x<w;x+=S){
+    const r=Math.hypot((x-w/2)/(w*.55),(y-h*1.1)/h);if(r>1)continue;
+    const a=Math.pow(1-r,1.4)*(.55+.45*Math.sin(r*22-t*.0018));if(a<.06)continue;
+    c.globalAlpha=Math.min(a*1.2,.95);c.fillStyle=P[Math.min(5,Math.floor(x/w*6))];const s=2+3*a;c.fillRect(x-s/2,y-s/2,s,s)}
+  c.globalAlpha=1}
+function eq(o,t){
+  const c=o.c,w=o.w,h=o.h,cw=10,gap=3,n=Math.floor(w/(cw+gap)),ch=7,gh=3,rows=Math.floor(h/(ch+gh));c.clearRect(0,0,w,h);
+  for(let i=0;i<n;i++){const v=(.5+.5*Math.sin(t*.003+i*.55))*(.55+.45*Math.sin(t*.0017+i*.21)),k=Math.round(v*rows*.95)+1;
+    for(let r=0;r<k;r++){const f=r/rows;c.fillStyle="hsl("+(235+f*80)+",90%,"+(55+f*25)+"%)";c.fillRect(i*(cw+gap),h-(r+1)*(ch+gh)+gh,cw,ch)}}}
+let cells=[];
+function wprep(o){
+  const w=o.w,h=o.h,S=7,b=document.createElement("canvas"),q=b.getContext("2d");b.width=Math.max(1,Math.round(w));b.height=Math.max(1,Math.round(h));
+  q.font="700 100px Geist,system-ui,sans-serif";const tw=q.measureText("ravalink").width,fs=Math.min(100*w*.96/tw,h*1.0);
+  q.font="700 "+fs+"px Geist,system-ui,sans-serif";q.fillText("ravalink",(w-q.measureText("ravalink").width)/2,h*.82);
+  const dt=q.getImageData(0,0,b.width,b.height).data;cells=[];
+  for(let y=S/2;y<h;y+=S)for(let x=S/2;x<w;x+=S)if(dt[((y|0)*b.width+(x|0))*4+3]>128)cells.push([x,y,Math.random()*6.28])}
+function word(o,t){const c=o.c;c.clearRect(0,0,o.w,o.h);for(const e of cells){c.globalAlpha=.1+.14*(.5+.5*Math.sin(t*.002+e[2]));c.fillStyle="#c34bff";c.fillRect(e[0]-1.5,e[1]-1.5,3,3)}c.globalAlpha=1}
+reg("cv",field);reg("ca",arch);reg("fc",word,wprep);
+addEventListener("resize",()=>{cvs.forEach(fit);if(reduce)redraw()});
+$("cv").parentElement.addEventListener("pointermove",e=>{const r=$("cv").getBoundingClientRect();px=e.clientX-r.left;py=e.clientY-r.top},{passive:true});
+$("cv").parentElement.addEventListener("pointerleave",()=>{px=py=-999});
+(function loop(t){if(!paused)cvs.forEach(o=>{if(o.vis)o.draw(o,t)});requestAnimationFrame(loop)})(0);
+if(reduce)redraw();
+/* pause animations */
+const pz=$("pz"),IP='<svg width="16" height="16" viewBox="0 0 16 16" fill="currentColor" aria-hidden="true"><rect x="3" y="2" width="3.5" height="12" rx="1"/><rect x="9.5" y="2" width="3.5" height="12" rx="1"/></svg>',IL='<svg width="16" height="16" viewBox="0 0 16 16" fill="currentColor" aria-hidden="true"><path d="M4 2l10 6-10 6z"/></svg>';
+pz.innerHTML=IP;pz.onclick=()=>{paused=!paused;document.body.classList.toggle("pa",paused);pz.setAttribute("aria-pressed",paused);pz.innerHTML=paused?IL:IP};
+/* reveal */
+const io=new IntersectionObserver(es=>es.forEach(t=>{if(t.isIntersecting){t.target.classList.add("in");io.unobserve(t.target)}}),{threshold:.25});
+document.querySelectorAll(".rv").forEach(s=>io.observe(s));
+/* contributors */
+const REPO="Ravalink-Project/Ravalink",CK="rl-contrib",cl=$("cl");
+function ph(l){const d=document.createElement("div");d.className="ph";let h=0;for(const c of l)h=(h*31+c.charCodeAt(0))%360;d.style.background="hsl("+h+",55%,32%)";d.textContent=l[0].toUpperCase();return d}
+function skel(){cl.textContent="";for(let i=0;i<10;i++){const a=document.createElement("div");a.className="av sk";a.innerHTML="<div></div><span>&nbsp;</span>";cl.appendChild(a)}}
+function chips(l){cl.textContent="";l.forEach(c=>{const a=document.createElement("a");a.className="av";a.href=c.html_url;a.target="_blank";a.rel="noopener";a.title=c.login;a.setAttribute("aria-label",c.login);
+  const i=new Image();i.width=i.height=64;i.alt="";i.loading="lazy";i.onerror=()=>i.replaceWith(ph(c.login));i.src=c.avatar_url+(c.avatar_url.includes("?")?"&":"?")+"s=128";a.appendChild(i);
+  const s=document.createElement("span");s.textContent=c.login;a.appendChild(s);cl.appendChild(a)})}
+function fail(){cl.textContent="";const a=document.createElement("a");a.className="btn ghost";a.href="https://github.com/"+REPO+"/graphs/contributors";a.target="_blank";a.rel="noopener";a.textContent="GitHub";cl.appendChild(a)}
+async function loadC(){
+  try{const c=JSON.parse(localStorage.getItem(CK)||"null");if(c&&Date.now()-c.t<18e5&&c.l.length){chips(c.l);return}}catch(_){}
+  try{const r=await fetch("https://api.github.com/repos/"+REPO+"/commits?per_page=100",{headers:{Accept:"application/vnd.github+json"}});if(!r.ok)throw 0;
+    const j=await r.json(),seen=new Set(),l=[];
+    for(const x of j){const a=x.author;if(a&&a.type==="User"&&!seen.has(a.login)){seen.add(a.login);l.push({login:a.login,avatar_url:a.avatar_url,html_url:a.html_url});if(l.length===10)break}}
+    if(!l.length)throw 0;chips(l);try{localStorage.setItem(CK,JSON.stringify({t:Date.now(),l}))}catch(_){}}
+  catch(_){fail()}}
+skel();
+const co=new IntersectionObserver(es=>{if(es[0].isIntersecting){co.disconnect();loadC()}},{rootMargin:"200px"});co.observe($("cs"));
+$("ml").onclick=()=>{closeMenu();lb.click()};
+addEventListener("resize",()=>{if(innerWidth>820)closeMenu()});
+if(document.fonts)document.fonts.ready.then(()=>{cvs.forEach(fit);redraw()});
+apply(start);
+</script>
+</body>
+</html>
