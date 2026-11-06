@@ -23,9 +23,8 @@
       - ./plugins:/home/container/plugins:ro</code></pre>
 <p>Créez les dossiers et le secret. Le fichier TOML doit exister avant le démarrage si <code>RAVALINK_CONFIG</code> est défini :</p>
 <pre><code>mkdir -p config plugins
-openssl rand -hex 32
-# Enregistrez le résultat dans .env :
-printf 'RAVALINK_PASSWORD=REMPLACER_PAR_LE_SECRET\n' > .env
+curl -fsSL https://raw.githubusercontent.com/Ravalink-Project/Ravalink/master/config/ravalink.example.toml -o config/ravalink.toml
+printf 'RAVALINK_PASSWORD=%s\n' "$(openssl rand -hex 32)" > .env
 chmod 600 .env</code></pre>
 <p>Placez votre configuration dans <code>config/ravalink.toml</code>. Vous pouvez partir du <a href="https://github.com/Ravalink-Project/Ravalink/blob/master/config/ravalink.example.toml">fichier TOML d’exemple</a>. Démarrez et consultez les logs :</p>
 <pre><code>docker compose pull
