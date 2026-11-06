@@ -93,7 +93,7 @@ sudo curl -fL "https://raw.githubusercontent.com/Ravalink-Project/Ravalink/v1.0.
 <p>Le fichier <code>SHA256SUMS</code> est fourni avec la release et couvre les deux binaires Linux. Ne lancez pas un binaire dont la vérification échoue.</p>
 <h3 id="native-service">Créer un compte système et un service systemd</h3>
 <p>Exécutez RavaLink sous un compte dédié, sans privilèges root :</p>
-<pre><button class="copy" type="button">Copier</button><code>sudo useradd --system --home-dir /var/lib/ravalink \
+<pre><button class="copy" type="button">Copier</button><code>sudo useradd --system --user-group --home-dir /var/lib/ravalink \
   --create-home --shell /usr/sbin/nologin ravalink
 sudo chown -R ravalink:ravalink /var/lib/ravalink
 
@@ -134,11 +134,24 @@ sudo journalctl -u ravalink -f</code></pre>
 <div class="callout info"><strong>Adresse d'écoute :</strong> l'exemple systemd écoute sur <code>127.0.0.1</code>, adapté à un reverse proxy installé sur le même hôte. Si le bot se connecte depuis une autre machine, configurez une adresse joignable (souvent <code>0.0.0.0</code>) et limitez l'accès avec un pare-feu ou un réseau privé. N'exposez pas le port sans authentification ni contrôle réseau.</div>
 <h3 id="native-update">Mettre à jour le binaire natif</h3>
 <p>Conservez votre TOML et votre fichier d'environnement. Téléchargez la nouvelle release, vérifiez <code>SHA256SUMS</code> comme à l'installation, remplacez le binaire, puis redémarrez :</p>
-<pre><button class="copy" type="button">Copier</button><code>sudo systemctl stop ravalink
-# Après téléchargement et vérification du nouvel asset :
-sudo install -m 0755 "./$ASSET" /opt/ravalink/bin/ravalink
+<pre><button class="copy" type="button">Copier</button><code>VERSION="v1.0.0-rc.1" # remplacez par la version souhaitée
+case "$(uname -m)" in
+  x86_64|amd64) ASSET="ravalink-linux-x86_64" ;;
+  aarch64|arm64) ASSET="ravalink-linux-aarch64" ;;
+  *) echo "Architecture non prise en charge"; exit 1 ;;
+esac
+BASE="https://github.com/Ravalink-Project/Ravalink/releases/download/$VERSION"
+TMP="$(mktemp -d)"
+cd "$TMP"
+curl -fL "$BASE/$ASSET" -o "$ASSET"
+curl -fL "$BASE/SHA256SUMS" -o SHA256SUMS
+grep "  $ASSET$" SHA256SUMS | sha256sum -c -
+
+sudo systemctl stop ravalink
+sudo install -m 0755 "$TMP/$ASSET" /opt/ravalink/bin/ravalink
 sudo systemctl start ravalink
-sudo journalctl -u ravalink -n 80 --no-pager</code></pre>
+sudo journalctl -u ravalink -n 80 --no-pager
+rm -rf "$TMP"</code></pre>
 <p>Utilisez l'asset ARM64 sur une machine <code>aarch64</code>. Vérifiez les notes de version et les changements de configuration avant chaque mise à jour.</p>
 </section>
 
@@ -281,7 +294,8 @@ prometheus_endpoint = "/metrics"</code></pre>
 <section class="doc" id="verify">
 <h2>Vérifier le fonctionnement</h2>
 <p>Depuis la machine qui héberge le nœud, vérifiez d'abord que le processus écoute sur le bon port. Les routes protégées nécessitent l'en-tête <code>Authorization</code>.</p>
-<pre><button class="copy" type="button">Copier</button><code>curl -i -H "Authorization: VOTRE_MOT_DE_PASSE" \\\n  http://127.0.0.1:2333/version
+<pre><button class="copy" type="button">Copier</button><code>curl -i -H "Authorization: VOTRE_MOT_DE_PASSE" \
+  http://127.0.0.1:2333/version
 
 # Exemple pour une route authentifiée :
 curl -i -H "Authorization: VOTRE_MOT_DE_PASSE" \
