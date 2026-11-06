@@ -136,7 +136,7 @@ sudo journalctl -u ravalink -f</code></pre>
 <p>Conservez votre TOML et votre fichier d'environnement. Téléchargez la nouvelle release, vérifiez <code>SHA256SUMS</code> comme à l'installation, remplacez le binaire, puis redémarrez :</p>
 <pre><button class="copy" type="button">Copier</button><code>sudo systemctl stop ravalink
 # Après téléchargement et vérification du nouvel asset :
-sudo install -m 0755 ./ravalink-linux-x86_64 /opt/ravalink/bin/ravalink
+sudo install -m 0755 "./$ASSET" /opt/ravalink/bin/ravalink
 sudo systemctl start ravalink
 sudo journalctl -u ravalink -n 80 --no-pager</code></pre>
 <p>Utilisez l'asset ARM64 sur une machine <code>aarch64</code>. Vérifiez les notes de version et les changements de configuration avant chaque mise à jour.</p>
@@ -281,7 +281,7 @@ prometheus_endpoint = "/metrics"</code></pre>
 <section class="doc" id="verify">
 <h2>Vérifier le fonctionnement</h2>
 <p>Depuis la machine qui héberge le nœud, vérifiez d'abord que le processus écoute sur le bon port. Les routes protégées nécessitent l'en-tête <code>Authorization</code>.</p>
-<pre><button class="copy" type="button">Copier</button><code>curl -i http://127.0.0.1:2333/version
+<pre><button class="copy" type="button">Copier</button><code>curl -i -H "Authorization: VOTRE_MOT_DE_PASSE" \\\n  http://127.0.0.1:2333/version
 
 # Exemple pour une route authentifiée :
 curl -i -H "Authorization: VOTRE_MOT_DE_PASSE" \
