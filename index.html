@@ -323,7 +323,7 @@ for(const k in L){const b=document.createElement("button");b.type="button";b.dat
 function apply(k){
   const d=L[k],e=L2[k]||L2.en,n=N[k]||N.en,mm=M[k]||M.en,lg=LG[k]||LG.en;
   document.documentElement.lang=k;document.documentElement.dir=RTL.includes(k)?"rtl":"ltr";
-  tone($("h"),n[0]);$("p").textContent=n[1];$("s").textContent=d[3];$("w1").textContent=n[2];$("w2").textContent=n[3];
+  tone($("h"),n[0]);$("p").textContent=n[1];$("s").textContent="v1.0.0-rc.1 · RC";$("w1").textContent=n[2];$("w2").textContent=n[3];
   $("t1").textContent=e[0];[4,5,6].forEach((j,i)=>$("s"+(i+1)).textContent=n[j]);
   $("b").textContent=d[5];$("c1d").textContent=mm[0];$("v1t").textContent=n[7];$("v1d").textContent=n[8];
   $("c3t").textContent=mm[1];$("c3d").textContent=mm[2];$("ct").textContent=mm[3];$("cd").textContent=mm[4];
