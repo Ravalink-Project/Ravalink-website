@@ -56,22 +56,25 @@ prometheus_endpoint = "/metrics"</code></pre>
 <li>Ouvrez <strong>Google Auth Platform</strong>. Si Google demande de configurer l'écran de consentement, renseignez le nom de l'application et les coordonnées demandées, puis enregistrez.</li>
 <li>Dans <strong>Clients</strong>, créez un nouveau client OAuth.</li>
 <li>Choisissez le type d'application <strong>TVs and Limited Input devices</strong> (téléviseurs et appareils à saisie limitée). Le flux utilisé par RavaLink est le Device Authorization Grant ; un client Web ou Desktop classique n'est pas le type attendu.</li>
-<li>Copiez le <strong>Client ID</strong>. Ne le confondez pas avec le secret d'un client Web : RavaLink attend le Client ID, pas un Client Secret.</li>
+<li>Copiez le <strong>Client ID</strong>. Ne le confondez pas avec le secret d'un client Web : RavaLink attend le Client ID et le Client Secret du client OAuth.</li>
 </ol>
 <p>Les menus Google peuvent évoluer. La référence du flux est la <a href="https://developers.google.com/identity/protocols/oauth2/limited-input-device" target="_blank" rel="noopener">documentation Google OAuth pour les appareils à saisie limitée</a>.</p>
 <h4>2. Définir les paramètres RavaLink</h4>
-<p>Les deux paramètres OAuth doivent être configurés ensemble. Si un seul est renseigné, le plugin YouTube refuse de démarrer.</p>
+<p>Les trois paramètres OAuth doivent être configurés ensemble. Si un seul est renseigné, le plugin YouTube refuse de démarrer.</p>
 <div class="table-wrap"><table><thead><tr><th>Variable</th><th>Obligatoire</th><th>Rôle</th></tr></thead><tbody>
 <tr><td><code>RAVALINK_YOUTUBE_OAUTH_CLIENT_ID</code></td><td>Pour OAuth</td><td>Client ID créé dans Google Cloud Console.</td></tr>
+<tr><td><code>RAVALINK_YOUTUBE_OAUTH_CLIENT_SECRET</code></td><td>Pour OAuth</td><td>Client Secret associé au même client Google. À conserver confidentiel.</td></tr>
 <tr><td><code>RAVALINK_YOUTUBE_OAUTH_TOKEN_FILE</code></td><td>Pour OAuth</td><td>Chemin du fichier privé dans lequel RavaLink enregistre les jetons d'accès et de renouvellement.</td></tr>
 <tr><td><code>RAVALINK_YOUTUBE_COOKIES_FILE</code></td><td>Alternative</td><td>Chemin d'un fichier de cookies exporté au format Netscape.</td></tr>
 </tbody></table></div>
 <p>Exemple pour un conteneur Pelican/Pterodactyl :</p>
 <pre><button class="copy" type="button">Copier</button><code>RAVALINK_YOUTUBE_OAUTH_CLIENT_ID=123456789-example.apps.googleusercontent.com
+RAVALINK_YOUTUBE_OAUTH_CLIENT_SECRET=YOUR_GOOGLE_OAUTH_CLIENT_SECRET
 RAVALINK_YOUTUBE_OAUTH_TOKEN_FILE=/home/container/config/youtube-oauth-token.json</code></pre>
 <p>Exemple équivalent dans <code>config/ravalink.toml</code> :</p>
 <pre><button class="copy" type="button">Copier</button><code>[youtube]
 oauth_client_id = "123456789-example.apps.googleusercontent.com"
+oauth_client_secret = "YOUR_GOOGLE_OAUTH_CLIENT_SECRET"
 oauth_token_file = "/home/container/config/youtube-oauth-token.json"</code></pre>
 <p>Le répertoire parent du fichier doit être accessible en écriture par l'utilisateur qui exécute RavaLink. Choisissez un emplacement persistant : le fichier doit survivre aux redémarrages et aux remplacements du conteneur. Ne placez jamais ce fichier dans un dépôt Git ou dans un dossier public.</p>
 <h4>3. Effectuer la première autorisation</h4>
@@ -88,7 +91,7 @@ oauth_token_file = "/home/container/config/youtube-oauth-token.json"</code></pre
 <p>Le fichier de jeton contient un jeton d'accès et un jeton de renouvellement. RavaLink utilise le jeton d'accès pour ses requêtes YouTube, renouvelle automatiquement l'accès avant son expiration et remplace le fichier de manière sécurisée. Sur les systèmes Unix, le fichier est créé avec des permissions privées (<code>0600</code>).</p>
 <p>Conservez le fichier entre les redémarrages. Si vous le supprimez ou si le jeton de renouvellement est révoqué, redémarrez RavaLink : un nouveau code d'autorisation sera affiché. Le Client ID doit rester identique à celui qui a servi à obtenir le jeton.</p>
 <h4>5. Utiliser OAuth avec Pelican ou Pterodactyl</h4>
-<p>Dans l'onglet <strong>Startup</strong> de l'egg RavaLink, renseignez le Client ID et le chemin du fichier de jeton. Si les variables ne sont pas visibles, mettez d'abord à jour l'egg depuis le dépôt officiel, puis actualisez les variables du serveur dans le panel. Pour le chemin, utilisez un emplacement dans le répertoire persistant du serveur, par exemple <code>/home/container/config/youtube-oauth-token.json</code>. Consultez le guide <a href="docs-panels.html">Pelican / Pterodactyl</a>.</p>
+<p>Dans l'onglet <strong>Startup</strong> de l'egg RavaLink, renseignez le Client ID, le Client Secret et le chemin du fichier de jeton. Si les variables ne sont pas visibles, mettez d'abord à jour l'egg depuis le dépôt officiel, puis actualisez les variables du serveur dans le panel. Pour le chemin, utilisez un emplacement dans le répertoire persistant du serveur, par exemple <code>/home/container/config/youtube-oauth-token.json</code>. Consultez le guide <a href="docs-panels.html">Pelican / Pterodactyl</a>.</p>
 <h4>6. Dépannage OAuth</h4>
 <ul>
 <li><strong>Une seule variable OAuth est configurée :</strong> configurez les deux variables ensemble, ou retirez-les toutes les deux pour désactiver OAuth.</li>
