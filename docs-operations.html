@@ -1,4 +1,66 @@
-<!doctype html><html lang="fr"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover"><meta name="theme-color" content="#08080c"><meta name="description" content="Sécurisez l’accès réseau, vérifiez l’API, résolvez les problèmes et consultez les limites de la RC1."><title>Exploitation et dépannage — RavaLink</title><link rel="stylesheet" href="docs.css"></head><body><header><div class="top"><a class="brand" href="index.html"><svg viewBox="0 0 1024 1024" aria-hidden="true"><path fill="#c34bff" d="M256 256h420v87h-420zM348 383h82v108h-82zM595 343h173v68h-173zM693 411h75v55h-75zM595 466h173v65h-173zM256 531h420v64h-420zM256 595h339v24h-339zM256 619h73v149h-73zM514 619h146l108 149H614z"/></svg><span>Rava<b>Link</b></span></a><nav class="toplinks"><a href="index.html">Accueil</a><a class="active" href="docs.html">Documentation</a><a href="https://github.com/Ravalink-Project/Ravalink">GitHub</a><a href="https://discord.gg/PBxB5eFNUp">Discord</a></nav><button class="mobile-menu" id="menuBtn" aria-expanded="false">☰ Menu</button><a class="btn" href="https://github.com/Ravalink-Project/Ravalink/releases/tag/v1.0.0-rc.1">Télécharger RC1</a></div></header><div class="shell"><aside class="sidebar" id="sidebar"><div class="side-brand">CENTRE DE DOCUMENTATION</div><div class="side-group"><h3>GUIDES</h3><a class="side-link " href="docs.html"><span class="ico">⌂</span>Bien démarrer</a></div><div class="side-group"><h3>INSTALLATION</h3><a class="side-link " href="docs-native.html"><span class="ico">⌘</span>Linux natif</a><a class="side-link " href="docs-docker.html"><span class="ico">▣</span>Docker</a><a class="side-link " href="docs-panels.html"><span class="ico">◈</span>Pelican / Pterodactyl</a></div><div class="side-group"><h3>RÉFÉRENCE</h3><a class="side-link " href="docs-config.html"><span class="ico">⚙</span>Configuration</a></div><div class="side-group"><h3>EXPLOITATION</h3><a class="side-link active" href="docs-operations.html#network"><span class="ico">⇄</span>Réseau & sécurité</a><a class="side-link " href="docs-operations.html#verify"><span class="ico">✓</span>Vérification</a><a class="side-link " href="docs-operations.html#trouble"><span class="ico">?</span>Dépannage</a><a class="side-link " href="docs-operations.html#limits"><span class="ico">◉</span>Compatibilité RC1</a></div></aside><main class="content"><div class="crumb"><a href="docs.html">DOCUMENTATION</a> / EXPLOITATION ET DÉPANNAGE</div><div class="page-head"><span class="eyebrow">GUIDE RAVALINK</span><h1>Exploitation et dépannage</h1><p>Sécurisez l’accès réseau, vérifiez l’API, résolvez les problèmes et consultez les limites de la RC1.</p></div>
+<!doctype html><html lang="fr"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover"><meta name="theme-color" content="#08080c"><meta name="description" content="Sécurisez l’accès réseau, vérifiez l’API, résolvez les problèmes et consultez les limites de la RC1."><title>Exploitation et dépannage — RavaLink</title><link rel="stylesheet" href="docs.css"></head><body><header><div class="top"><a class="brand" href="index.html"><svg viewBox="0 0 1024 1024" aria-hidden="true"><path fill="#c34bff" d="M256 256h420v87h-420zM348 383h82v108h-82zM595 343h173v68h-173zM693 411h75v55h-75zM595 466h173v65h-173zM256 531h420v64h-420zM256 595h339v24h-339zM256 619h73v149h-73zM514 619h146l108 149H614z"/></svg><span>Rava<b>Link</b></span></a><nav class="toplinks"><a href="index.html">Accueil</a><a class="active" href="docs.html">Documentation</a><a href="https://github.com/Ravalink-Project/Ravalink">GitHub</a><a href="https://discord.gg/PBxB5eFNUp">Discord</a></nav><button class="mobile-menu" id="menuBtn" aria-expanded="false">☰ Menu</button><a class="btn" href="https://github.com/Ravalink-Project/Ravalink/releases/tag/v1.0.0-rc.1">Télécharger RC1</a></div></header><div class="shell"><aside class="sidebar" id="sidebar"><div class="side-brand">CENTRE DE DOCUMENTATION</div><div class="side-group"><h3>GUIDES</h3><a class="side-link " href="docs.html"><span class="ico">⌂</span>Bien démarrer</a></div><div class="side-group"><h3>INSTALLATION</h3><a class="side-link " href="docs-native.html"><span class="ico">⌘</span>Linux natif</a><a class="side-link " href="docs-docker.html"><span class="ico">▣</span>Docker</a><a class="side-link " href="docs-panels.html"><span class="ico">◈</span>Pelican / Pterodactyl</a></div><div class="side-group"><h3>RÉFÉRENCE</h3><a class="side-link " href="docs-config.html"><span class="ico">⚙</span>Configuration</a></div><div class="side-group"><h3>EXPLOITATION</h3><a class="side-link active" href="docs-operations.html#network"><span class="ico">⇄</span>Réseau & sécurité</a><a class="side-link " href="docs-operations.html#verify"><span class="ico">✓</span>Vérification</a><a class="side-link " href="docs-operations.html#trouble"><span class="ico">?</span>Dépannage</a><a class="side-link " href="docs-operations.html#limits"><span class="ico">◉</span>Compatibilité RC1</a></div></aside><main class="content"><div class="crumb"><a href="docs.html">DOCUMENTATION</a> / EXPLOITATION ET DÉPANNAGE</div><div class="page-head"><span class="eyebrow">GUIDE RAVALINK · RC1</span><h1>Exploitation et dépannage</h1><p>Sécurisez l’accès réseau, vérifiez l’API, résolvez les problèmes et consultez les limites de la RC1.</p></div><section class="doc" id="network">
+<h2>Réseau et sécurité</h2>
+<ul>
+<li><strong>TCP 2333</strong> : API REST Lavalink v4 et WebSocket. N'ouvrez que ce port si vos clients doivent joindre le nœud.</li>
+<li><strong>Sortie réseau</strong> : nécessaire pour GitHub Releases, les fournisseurs audio et les connexions vocales Discord.</li>
+<li><strong>Authentification</strong> : toutes les requêtes REST et la connexion WebSocket doivent fournir le secret dans l'en-tête <code>Authorization</code>.</li>
+<li><strong>TLS</strong> : placez un reverse proxy HTTPS/WSS devant RavaLink lorsque le trafic traverse Internet. Le proxy doit transmettre les connexions WebSocket (Upgrade).</li>
+<li><strong>Prometheus</strong> : les métriques sont désactivées par défaut. L'endpoint n'ajoute pas d'authentification ; ne le rendez pas public sans contrôle d'accès.</li>
+<li><strong>Privilèges</strong> : utilisez un utilisateur système non-root pour l'installation native ; le conteneur officiel s'exécute sans privilèges root.</li>
+</ul>
+<h3>Exemple Nginx (reverse proxy WebSocket)</h3>
+<p>Remplacez <code>audio.example.com</code> par votre nom de domaine et configurez votre certificat TLS dans le bloc serveur :</p>
+<pre><button class="copy" type="button">Copier</button><code>server {
+    listen 443 ssl http2;
+    server_name audio.example.com;
 
+    # ssl_certificate et ssl_certificate_key à configurer
 
-<nav class="page-nav"><a href="docs-config.html"><small>← PRÉCÉDENT</small><strong>Configuration</strong></a></nav></main></div><footer><div class="foot"><span>© 2026 RavaLink · Documentation communautaire · v1.0.0-rc.1</span><span><a href="index.html">Accueil</a> · <a href="https://github.com/Ravalink-Project/Ravalink">Code source</a> · <a href="https://discord.gg/PBxB5eFNUp">Discord</a></span></div></footer><script src="docs.js"></script></body></html>
+    location / {
+        proxy_pass http://127.0.0.1:2333;
+        proxy_http_version 1.1;
+        proxy_set_header Host $host;
+        proxy_set_header X-Real-IP $remote_addr;
+        proxy_set_header X-Forwarded-For $proxy_add_x_forwarded_for;
+        proxy_set_header Upgrade $http_upgrade;
+        proxy_set_header Connection "upgrade";
+        proxy_read_timeout 3600s;
+    }
+}</code></pre>
+<p>Ne retirez pas l'authentification RavaLink au niveau du proxy. Si vous utilisez un proxy TCP ou un tunnel, vérifiez qu'il préserve les connexions WebSocket et les en-têtes HTTP.</p>
+</section>
+<section class="doc" id="verify">
+<h2>Vérifier le fonctionnement</h2>
+<p>Depuis la machine qui héberge le nœud, vérifiez d'abord que le processus écoute sur le bon port. Les routes protégées nécessitent l'en-tête <code>Authorization</code>.</p>
+<pre><button class="copy" type="button">Copier</button><code>curl -i -H "Authorization: VOTRE_MOT_DE_PASSE" \
+  http://127.0.0.1:2333/version
+
+# Exemple pour une route authentifiée :
+curl -i -H "Authorization: VOTRE_MOT_DE_PASSE" \
+  http://127.0.0.1:2333/v4/info
+
+curl -i -H "Authorization: VOTRE_MOT_DE_PASSE" \
+  http://127.0.0.1:2333/v4/stats</code></pre>
+<p><code>/version</code> permet de vérifier que le serveur répond. <code>/v4/info</code> et <code>/v4/stats</code> vérifient aussi l'authentification et l'API Lavalink v4. Remplacez le secret d'exemple par votre mot de passe réel ; ne le publiez pas dans un ticket ou une capture d'écran.</p>
+<p>Configurez ensuite votre client Lavalink habituel avec l'hôte, le port, le mot de passe et TLS si votre reverse proxy termine HTTPS. La compatibilité exacte dépend des fonctionnalités utilisées par le client et doit être évaluée avec le registre de compatibilité.</p>
+</section>
+<section class="doc" id="trouble">
+<h2>Dépannage</h2>
+<h3>Le processus refuse de démarrer</h3><ul><li>Vérifiez que <code>RAVALINK_PASSWORD</code> est défini et comporte au moins 16 caractères.</li><li>Vérifiez les journaux : <code>journalctl -u ravalink -n 100 --no-pager</code> ou la console du panel / <code>docker compose logs ravalink</code>.</li><li>Vérifiez que le port est disponible et que l'adresse d'écoute est valide.</li></ul>
+<h3>Le client obtient une erreur 401</h3><ul><li>Le secret du client doit correspondre exactement à <code>RAVALINK_PASSWORD</code>.</li><li>Le client doit transmettre <code>Authorization</code> pour REST et WebSocket.</li><li>Vérifiez les espaces, retours à la ligne et anciennes valeurs de secret.</li></ul>
+<h3>Le WebSocket ne se connecte pas derrière Nginx</h3><ul><li>Activez HTTP/1.1 et transmettez les en-têtes <code>Upgrade</code> et <code>Connection</code>.</li><li>Vérifiez le port amont et les timeouts du proxy.</li><li>Vérifiez que le pare-feu autorise le trafic TCP vers le proxy.</li></ul>
+<h3>L'egg s'arrête avant le lancement</h3><ul><li>Vérifiez l'accès sortant vers <code>api.github.com</code> et <code>github.com</code>.</li><li>Vérifiez que le yolk Debian fournit <code>curl</code>, <code>jq</code> et <code>sha256sum</code>.</li><li>Vérifiez qu'une release publiée contient le binaire de l'architecture et <code>SHA256SUMS</code>.</li><li>Ne désactivez pas la vérification SHA-256 pour contourner une erreur.</li></ul>
+</section>
+<section class="doc" id="limits">
+<h2>Compatibilité et limites de la RC1</h2>
+<p>La RC1 valide les portes automatisées de préparation, la compilation et le smoke test API. Cela ne remplace pas les essais réels de lecture dans des guildes Discord, les tests de charge prolongés ni la validation de chaque fournisseur audio et client tiers.</p>
+<ul>
+<li>Le route planner natif n'est pas disponible : les opérations correspondantes renvoient les réponses documentées dans le registre de compatibilité.</li>
+<li>Les flux HTTP progressifs ne sont pas seekables après le début de la lecture ; certaines sources/conteneurs nécessitant un accès aléatoire peuvent échouer.</li>
+<li>La durée des URL génériques peut être inconnue.</li>
+<li>Les filtres de plugins sans gestionnaire natif sont rejetés explicitement.</li>
+<li>La validation de lecture vocale Discord en conditions réelles reste à effectuer pendant le cycle RC.</li>
+</ul>
+<p>Avant une mise en production, lisez les documents maintenus avec le code :</p>
+<div class="links"><a href="https://github.com/Ravalink-Project/Ravalink/blob/master/COMPATIBILITY.md">Registre de compatibilité</a><a href="https://github.com/Ravalink-Project/Ravalink/blob/master/RC1_ACCEPTANCE.md">Checklist RC1</a><a href="https://github.com/Ravalink-Project/Ravalink/blob/master/docs/api/rest.md">Référence REST</a><a href="https://github.com/Ravalink-Project/Ravalink/blob/master/docs/api/websocket.md">Référence WebSocket</a><a href="https://github.com/Ravalink-Project/Ravalink-eggs">Eggs officiels</a></div>
+</section><nav class="page-nav"><a href="docs-config.html"><small>← PRÉCÉDENT</small><strong>Configuration</strong></a></nav></main></div><footer><div class="foot"><span>© 2026 RavaLink · Documentation communautaire · v1.0.0-rc.1</span><span><a href="index.html">Accueil</a> · <a href="https://github.com/Ravalink-Project/Ravalink">Code source</a> · <a href="https://discord.gg/PBxB5eFNUp">Discord</a></span></div></footer><script src="docs.js"></script></body></html>
