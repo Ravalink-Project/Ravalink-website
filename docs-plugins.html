@@ -33,6 +33,46 @@ region = "eu"</code></pre><p>Les chemins d’exécutable relatifs sont résolus 
     },
     "userData": {}
   }
-}</code></pre><p>Les valeurs de <code>loadType</code> prises en charge sont <code>track</code>, <code>playlist</code> et <code>search</code>. Pour la lecture, le résultat doit contenir une piste Lavalink complète et une URL audio HTTP(S) directe et lisible dans <code>pluginInfo.streamUrl</code>. RavaLink applique ses contrôles d’adresse IP publique, de redirection, de format et de décodeur à cette URL.</p><ul><li>Maximum 4 Mio de sortie stdout par invocation.</li><li>Maximum deux processus simultanés par extension.</li><li>Timeout mural de 30 secondes ; un processus expiré est tué.</li><li>stdout est réservé au JSON ; ne mélangez jamais les logs avec la réponse.</li><li>Les processus s’exécutent avec le compte système RavaLink, sans sandbox ; seules les variables explicitement configurées sont transmises.</li></ul><h2>Développer un plugin externe</h2><p>Le processus est lancé par RavaLink. Il reçoit une requête JSON versionnée sur son entrée standard et renvoie un résultat JSON de chargement de plugin (ou <code>null</code>) sur sa sortie standard. Réservez stdout au protocole : envoyez les logs de diagnostic sur stderr.</p><ul><li>Traitez chaque message selon la version de protocole annoncée.</li><li>Validez les champs et refusez proprement les opérations non prises en charge.</li><li>Retournez des erreurs structurées plutôt que de terminer brutalement le processus.</li><li>Respectez les limites de temps d’exécution et de taille de réponse imposées par l’hôte.</li><li>Ne supposez pas l’accès aux objets internes du serveur, au transport vocal Discord, aux décodeurs ou aux routes REST privées.</li></ul><p>Le protocole et le contrat de données évoluent avec RavaLink. Avant de publier un plugin, testez-le contre la version cible et consultez le code du contrat :</p><div class="links"><a href="https://github.com/Ravalink-Project/Ravalink/tree/master/crates/ravalink-plugin-api">API Rust du plugin</a><a href="https://github.com/Ravalink-Project/Ravalink/blob/master/docs/plugins/external-process.md">Protocole externe détaillé</a><a href="https://github.com/Ravalink-Project/Ravalink/blob/master/docs/plugins/native-rust.md">Développement natif Rust</a></div><h2>Développer une intégration native Rust</h2><p>Les intégrations maintenues par le projet sont des crates distinctes du workspace et partagent le contrat <code>ravalink-plugin-api</code>. Pour contribuer :</p><ol><li>Forkez le dépôt principal et créez une branche dédiée.</li><li>Étudiez une intégration existante (YouTube, LavaSrc ou LavaSearch) et le trait <code>RavaLinkPlugin</code>.</li><li>Définissez les capacités et préfixes d’identifiants nécessaires sans élargir inutilement l’API.</li><li>Ajoutez des tests unitaires et des tests d’intégration couvrant les erreurs réseau, les données invalides et les réponses vides.</li><li>Ajoutez la configuration, la documentation et les tests de compatibilité correspondants.</li><li>Lancez les tests du workspace avant d’ouvrir une pull request.</li></ol><pre><code>cargo fmt --all -- --check
+}</code></pre><p>Les valeurs de <code>loadType</code> prises en charge sont <code>track</code>, <code>playlist</code> et <code>search</code>. Pour la lecture, le résultat doit contenir une piste Lavalink complète et une URL audio HTTP(S) directe et lisible dans <code>pluginInfo.streamUrl</code>. RavaLink applique ses contrôles d’adresse IP publique, de redirection, de format et de décodeur à cette URL.</p><ul><li>Maximum 4 Mio de sortie stdout par invocation.</li><li>Maximum deux processus simultanés par extension.</li><li>Timeout mural de 30 secondes ; un processus expiré est tué.</li><li>stdout est réservé au JSON ; ne mélangez jamais les logs avec la réponse.</li><li>Les processus s’exécutent avec le compte système RavaLink, sans sandbox ; seules les variables explicitement configurées sont transmises.</li></ul><h2>Développer un plugin externe</h2><p>Le processus est lancé par RavaLink. Il reçoit une requête JSON versionnée sur son entrée standard et renvoie un résultat JSON de chargement de plugin (ou <code>null</code>) sur sa sortie standard. Réservez stdout au protocole : envoyez les logs de diagnostic sur stderr.</p><ul><li>Traitez chaque message selon la version de protocole annoncée.</li><li>Validez les champs et refusez proprement les opérations non prises en charge.</li><li>Retournez des erreurs structurées plutôt que de terminer brutalement le processus.</li><li>Respectez les limites de temps d’exécution et de taille de réponse imposées par l’hôte.</li><li>Ne supposez pas l’accès aux objets internes du serveur, au transport vocal Discord, aux décodeurs ou aux routes REST privées.</li></ul><p>Le protocole et le contrat de données évoluent avec RavaLink. Avant de publier un plugin, testez-le contre la version cible et consultez le code du contrat :</p><div class="links"><a href="https://github.com/Ravalink-Project/Ravalink/tree/master/crates/ravalink-plugin-api">API Rust du plugin</a><a href="https://github.com/Ravalink-Project/Ravalink/blob/master/docs/plugins/external-process.md">Protocole externe détaillé</a><a href="https://github.com/Ravalink-Project/Ravalink/blob/master/docs/plugins/native-rust.md">Développement natif Rust</a></div><h3>Exemple exécutable Rust minimal</h3><p>Ce squelette montre le cycle stdin → désérialisation → réponse JSON. Il renvoie un résultat de recherche vide pour les identifiants <code>community:</code> ; il valide le transport, mais ne fournit pas encore de piste jouable.</p><pre><code># Cargo.toml
+[package]
+name = "community-source"
+version = "1.0.0"
+edition = "2021"
+
+[dependencies]
+serde = { version = "1", features = ["derive"] }
+serde_json = "1"</code></pre><pre><code>// src/main.rs
+use serde::Deserialize;
+use serde_json::json;
+use std::io::{self, Read};
+
+#[derive(Deserialize)]
+#[serde(rename_all = "camelCase")]
+struct Request {
+    protocol_version: u32,
+    identifier: String,
+}
+
+fn main() -> Result<(), Box<dyn std::error::Error>> {
+    let mut input = String::new();
+    io::stdin().read_to_string(&mut input)?;
+    let request: Request = serde_json::from_str(&input)?;
+
+    if request.protocol_version != 1
+        || !request.identifier.starts_with("community:")
+    {
+        println!("null");
+        return Ok(());
+    }
+
+    let response = json!({
+        "loadType": "search",
+        "data": { "tracks": [], "pluginInfo": {} }
+    });
+    println!("{}", serde_json::to_string(&response)?);
+    Ok(())
+}</code></pre><p>Compilez en mode release, copiez le binaire dans le dossier du plugin, puis référencez-le dans le manifeste :</p><pre><code>cargo build --release
+mkdir -p plugins/community-source/bin
+install -m 0755 target/release/community-source plugins/community-source/bin/community-source</code></pre><p>Remplacez ce résultat vide par une réponse <code>track</code>, <code>playlist</code> ou <code>search</code> valide. Pour la lecture audio, la piste doit inclure un <code>pluginInfo.streamUrl</code> direct et compatible.</p><h2>Développer une intégration native Rust</h2><p>Les intégrations maintenues par le projet sont des crates distinctes du workspace et partagent le contrat <code>ravalink-plugin-api</code>. Pour contribuer :</p><ol><li>Forkez le dépôt principal et créez une branche dédiée.</li><li>Étudiez une intégration existante (YouTube, LavaSrc ou LavaSearch) et le trait <code>RavaLinkPlugin</code>.</li><li>Définissez les capacités et préfixes d’identifiants nécessaires sans élargir inutilement l’API.</li><li>Ajoutez des tests unitaires et des tests d’intégration couvrant les erreurs réseau, les données invalides et les réponses vides.</li><li>Ajoutez la configuration, la documentation et les tests de compatibilité correspondants.</li><li>Lancez les tests du workspace avant d’ouvrir une pull request.</li></ol><pre><code>cargo fmt --all -- --check
 cargo clippy --workspace --all-targets -- -D warnings
 cargo test --workspace</code></pre><div class="callout"><strong>Limites actuelles :</strong> pas de chargement de JAR Java, pas de chargement dynamique de bibliothèques Rust avec ABI stable, et pas de sandbox de sécurité. Les extensions natives exigent une modification et une recompilation du workspace.</div></section><nav class="page-nav"><a href="docs-config.html"><small>← PRÉCÉDENT</small><strong>Configuration</strong></a><a href="docs-api.html" style="text-align:right"><small>SUIVANT →</small><strong>API REST & WebSocket</strong></a></nav></main></div><footer><div class="foot"><span>© 2026 RavaLink · Documentation · v1.0.0-rc.1</span><span><a href="index.html">Accueil</a> · <a href="https://github.com/Ravalink-Project/Ravalink">Code source</a> · <a href="https://discord.gg/PBxB5eFNUp">Discord</a></span></div></footer><script src="docs.js"></script></body></html>
