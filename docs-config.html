@@ -27,7 +27,10 @@
 <tr><td><code>RAVALINK_APPLE_MUSIC_TOKEN</code></td><td>Jeton développeur Apple Music</td><td>Optionnel</td></tr>
 </tbody></table></div>
 <h3>Exemple TOML</h3>
-<pre><button class="copy" type="button">Copier</button><code>[server]
+<pre><button class="copy" type="button">Copier</button><code># Clé de premier niveau : répertoire de découverte des plugins
+plugin_directory = "plugins"
+
+[server]
 address = "0.0.0.0"
 port = 2333
 password = "replace-with-a-long-random-secret"
