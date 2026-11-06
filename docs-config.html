@@ -18,6 +18,13 @@
 <tr><td><code>RAVALINK_AUDIO_MAX_ACTIVE_DECODED_PCM_BYTES</code></td><td>Limite de PCM décodé conservé par les lecteurs actifs</td><td>268435456</td></tr>
 <tr><td><code>RAVALINK_METRICS_PROMETHEUS_ENABLED</code></td><td>Active l'exposition des métriques Prometheus</td><td>false</td></tr>
 <tr><td><code>RAVALINK_METRICS_PROMETHEUS_ENDPOINT</code></td><td>Chemin HTTP des métriques</td><td>/metrics</td></tr>
+<tr><td><code>RAVALINK_YOUTUBE_API_BASE</code></td><td>URL de base de l’API compatible Invidious</td><td>https://inv.nadeko.net</td></tr>
+<tr><td><code>RAVALINK_YOUTUBE_COOKIES_FILE</code></td><td>Chemin vers un fichier cookies Netscape</td><td>Optionnel</td></tr>
+<tr><td><code>RAVALINK_YOUTUBE_OAUTH_CLIENT_ID</code></td><td>Client ID OAuth Google pour le Device Flow</td><td>Optionnel</td></tr>
+<tr><td><code>RAVALINK_YOUTUBE_OAUTH_TOKEN_FILE</code></td><td>Chemin du fichier de jeton OAuth persistant</td><td>Optionnel</td></tr>
+<tr><td><code>RAVALINK_SPOTIFY_CLIENT_ID</code></td><td>Client ID Spotify Developer</td><td>Optionnel</td></tr>
+<tr><td><code>RAVALINK_SPOTIFY_CLIENT_SECRET</code></td><td>Secret Spotify Developer</td><td>Optionnel</td></tr>
+<tr><td><code>RAVALINK_APPLE_MUSIC_TOKEN</code></td><td>Jeton développeur Apple Music</td><td>Optionnel</td></tr>
 </tbody></table></div>
 <h3>Exemple TOML</h3>
 <pre><button class="copy" type="button">Copier</button><code>[server]
@@ -42,4 +49,4 @@ max_active_decoded_pcm_bytes = 268435456
 prometheus_enabled = false
 prometheus_endpoint = "/metrics"</code></pre>
 <p>La configuration complète et à jour est disponible dans le <a href="https://github.com/Ravalink-Project/Ravalink/blob/master/config/ravalink.example.toml">fichier d'exemple du dépôt</a>. Les paramètres non listés ici peuvent évoluer entre releases ; privilégiez ce fichier comme référence.</p>
-</section><nav class="page-nav"><a href="docs-panels.html"><small>← PRÉCÉDENT</small><strong>Pelican / Pterodactyl</strong></a><a href="docs-operations.html" style="text-align:right"><small>SUIVANT →</small><strong>Documentation</strong></a></nav></main></div><footer><div class="foot"><span>© 2026 RavaLink · Documentation communautaire · v1.0.0-rc.1</span><span><a href="index.html">Accueil</a> · <a href="https://github.com/Ravalink-Project/Ravalink">Code source</a> · <a href="https://discord.gg/PBxB5eFNUp">Discord</a></span></div></footer><script src="docs.js"></script></body></html>
+<p>Pour les plugins déclarés dans TOML, <code>plugin_directory</code> est une clé de premier niveau, au même niveau que <code>[server]</code>, <code>[audio]</code> et <code>[metrics]</code>. Les blocs <code>[[plugins]]</code> permettent de déclarer directement un processus externe ; consultez le guide <a href="docs-plugins.html">Plugins & extensions</a>.</p></section><nav class="page-nav"><a href="docs-panels.html"><small>← PRÉCÉDENT</small><strong>Pelican / Pterodactyl</strong></a><a href="docs-operations.html" style="text-align:right"><small>SUIVANT →</small><strong>Documentation</strong></a></nav></main></div><footer><div class="foot"><span>© 2026 RavaLink · Documentation communautaire · v1.0.0-rc.1</span><span><a href="index.html">Accueil</a> · <a href="https://github.com/Ravalink-Project/Ravalink">Code source</a> · <a href="https://discord.gg/PBxB5eFNUp">Discord</a></span></div></footer><script src="docs.js"></script></body></html>
