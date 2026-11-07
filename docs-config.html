@@ -16,8 +16,9 @@
 <tr><td><code>RAVALINK_AUDIO_MAX_SOURCE_DOWNLOAD_BYTES</code></td><td>Limite de taille des sources téléchargées par le résolveur bufferisé</td><td>134217728</td></tr>
 <tr><td><code>RAVALINK_AUDIO_MAX_DECODED_CACHE_BYTES</code></td><td>Limite du cache PCM décodé en attente</td><td>268435456</td></tr>
 <tr><td><code>RAVALINK_YOUTUBE_COOKIES_FILE</code></td><td>Fichier de cookies YouTube au format Netscape</td><td>Facultatif</td></tr>
-<tr><td><code>RAVALINK_YOUTUBE_OAUTH_CLIENT_ID</code></td><td>Client ID Google pour OAuth Device Flow</td><td>Facultatif, avec le chemin du jeton</td></tr>
-<tr><td><code>RAVALINK_YOUTUBE_OAUTH_TOKEN_FILE</code></td><td>Fichier privé des jetons OAuth</td><td>Facultatif, avec le Client ID</td></tr>
+<tr><td><code>RAVALINK_YOUTUBE_OAUTH_CLIENT_ID</code></td><td>Client ID Google pour OAuth Device Flow</td><td>Facultatif, avec le Client Secret et le chemin du jeton</td></tr>
+<tr><td><code>RAVALINK_YOUTUBE_OAUTH_CLIENT_SECRET</code></td><td>Client Secret du même client Google</td><td>Facultatif, avec le Client ID et le chemin du jeton</td></tr>
+<tr><td><code>RAVALINK_YOUTUBE_OAUTH_TOKEN_FILE</code></td><td>Fichier privé des jetons OAuth</td><td>Facultatif, avec le Client ID et le Client Secret</td></tr>
 <tr><td><code>RAVALINK_AUDIO_MAX_ACTIVE_DECODED_PCM_BYTES</code></td><td>Limite de PCM décodé conservé par les lecteurs actifs</td><td>268435456</td></tr>
 <tr><td><code>RAVALINK_METRICS_PROMETHEUS_ENABLED</code></td><td>Active l'exposition des métriques Prometheus</td><td>false</td></tr>
 <tr><td><code>RAVALINK_METRICS_PROMETHEUS_ENDPOINT</code></td><td>Chemin HTTP des métriques</td><td>/metrics</td></tr>
@@ -60,7 +61,7 @@ prometheus_endpoint = "/metrics"</code></pre>
 </ol>
 <p>Les menus Google peuvent évoluer. La référence du flux est la <a href="https://developers.google.com/identity/protocols/oauth2/limited-input-device" target="_blank" rel="noopener">documentation Google OAuth pour les appareils à saisie limitée</a>.</p>
 <h4>2. Définir les paramètres RavaLink</h4>
-<p>Les trois paramètres OAuth doivent être configurés ensemble. Si un seul est renseigné, le plugin YouTube refuse de démarrer.</p>
+<p>Les trois paramètres OAuth doivent être configurés ensemble. Si un seul est renseigné, le plugin YouTube refuse de démarrer. RavaLink demande le scope Google <code>https://www.googleapis.com/auth/youtube</code>, nécessaire à ses requêtes InnerTube authentifiées.</p>
 <div class="table-wrap"><table><thead><tr><th>Variable</th><th>Obligatoire</th><th>Rôle</th></tr></thead><tbody>
 <tr><td><code>RAVALINK_YOUTUBE_OAUTH_CLIENT_ID</code></td><td>Pour OAuth</td><td>Client ID créé dans Google Cloud Console.</td></tr>
 <tr><td><code>RAVALINK_YOUTUBE_OAUTH_CLIENT_SECRET</code></td><td>Pour OAuth</td><td>Client Secret associé au même client Google. À conserver confidentiel.</td></tr>
@@ -94,7 +95,7 @@ oauth_token_file = "/home/container/config/youtube-oauth-token.json"</code></pre
 <p>Dans l'onglet <strong>Startup</strong> de l'egg RavaLink, renseignez le Client ID, le Client Secret et le chemin du fichier de jeton. Si les variables ne sont pas visibles, mettez d'abord à jour l'egg depuis le dépôt officiel, puis actualisez les variables du serveur dans le panel. Pour le chemin, utilisez un emplacement dans le répertoire persistant du serveur, par exemple <code>/home/container/config/youtube-oauth-token.json</code>. Consultez le guide <a href="docs-panels.html">Pelican / Pterodactyl</a>.</p>
 <h4>6. Dépannage OAuth</h4>
 <ul>
-<li><strong>Une seule variable OAuth est configurée :</strong> configurez les deux variables ensemble, ou retirez-les toutes les deux pour désactiver OAuth.</li>
+<li><strong>Les paramètres OAuth sont incomplets :</strong> configurez le Client ID, le Client Secret et le chemin du jeton ensemble, ou laissez les trois vides pour désactiver OAuth.</li>
 <li><strong>Le code n'apparaît pas :</strong> vérifiez que le Client ID est valide, que le serveur peut joindre <code>oauth2.googleapis.com</code> et que vous consultez les logs du démarrage courant.</li>
 <li><strong>Le code a expiré :</strong> redémarrez RavaLink et utilisez le nouveau code affiché.</li>
 <li><strong>Google indique que l'accès est refusé :</strong> vérifiez le compte choisi et acceptez la demande. Si vous refusez, une nouvelle tentative nécessitera un redémarrage.</li>
