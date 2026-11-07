@@ -53,7 +53,7 @@ curl -i -H "Authorization: VOTRE_MOT_DE_PASSE" \
 </section>
 <section class="doc" id="limits">
 <h2>Compatibilité et limites connues</h2>
-<p>RavaLink implémente l’API Lavalink v4. La compatibilité dépend toutefois des fonctionnalités utilisées par votre client et des capacités de chaque source audio. Consultez le registre de compatibilité pour connaître le détail des routes et comportements pris en charge.</p>
+<p>RavaLink cible le contrat de l’API Lavalink v4. Toutes les routes et tous les comportements ne sont pas encore équivalents à ceux du serveur Java. La compatibilité dépend aussi des fonctionnalités utilisées par votre client et des capacités de chaque source audio. Consultez le registre maintenu dans le dépôt pour connaître l’état précis de chaque fonctionnalité.</p>
 <ul>
 <li>Le route planner natif n'est pas disponible : les opérations correspondantes renvoient les réponses documentées dans le registre de compatibilité.</li>
 <li>Les flux HTTP progressifs ne sont pas seekables après le début de la lecture ; certaines sources/conteneurs nécessitant un accès aléatoire peuvent échouer.</li>

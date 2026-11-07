@@ -21,7 +21,7 @@ cd ravalink</code></pre><p>Créez <code>compose.yml</code> :</p><pre><code>servi
       - ./plugins:/home/container/plugins
       - ./data:/home/container/data</code></pre><p>Générez un secret aléatoire, remplacez la valeur d’exemple, puis démarrez :</p><pre><code>openssl rand -hex 32
 docker compose up -d
-docker compose logs -f ravalink</code></pre><p>L’image utilise un point d’entrée compatible panel et attend la variable <code>STARTUP</code>. En dehors de Pelican/Pterodactyl, définissez-la à <code>ravalink</code>. Le fichier de configuration facultatif est lu depuis <code>/home/container/config/ravalink.toml</code>.</p><h3 id="docker-run">Lancement avec docker run</h3><pre><code>docker run -d \
+docker compose logs -f ravalink</code></pre><p>L’image utilise un point d’entrée compatible panel et attend la variable <code>STARTUP</code>. En dehors de Pelican/Pterodactyl, définissez-la à <code>ravalink</code>. Le fichier de configuration facultatif est lu depuis <code>/home/container/config/ravalink.toml</code>.</p><h3>Conserver les jetons OAuth YouTube</h3><p>Le volume <code>./data:/home/container/data</code> conserve le fichier de jetons entre les recréations du conteneur. Pour activer OAuth, passez <code>RAVALINK_YOUTUBE_OAUTH_ENABLED</code> à <code>true</code>, puis suivez le <a href="docs-config.html#youtube">guide d’autorisation YouTube</a>. Ne supprimez pas le dossier <code>data</code> lors d’une mise à jour.</p><h3 id="docker-run">Lancement avec docker run</h3><pre><code>docker run -d \
   --name ravalink \
   --restart unless-stopped \
   -e STARTUP=ravalink \

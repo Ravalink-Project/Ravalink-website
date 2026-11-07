@@ -84,7 +84,7 @@ impl RavaLinkPlugin for ExamplePlugin {
             )));
         }
 
-        // Implement provider lookup and track conversion here.
+        let _query = query;
         Ok(Some(PluginLoadResult::new(
             PluginLoadType::Search,
             serde_json::json!([]),
